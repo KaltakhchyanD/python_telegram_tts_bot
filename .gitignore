@@ -1,0 +1,6 @@
+__pycache__/
+
+env/
+
+settings.py
+env_local.sh
