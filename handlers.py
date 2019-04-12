@@ -1,4 +1,4 @@
-from yandex_tts import generate_speech_from_text, generate_text_from_speech
+from yandex_tts import generate_speech_from_text, generate_text_from_speech, generate_text_from_long_speech
 
 
 def start_handler(bot, update, user_data):
@@ -26,7 +26,10 @@ def incomming_audio_handler(bot, update, user_data):
     voice_file = voice.get_file()
     voice_file.download('test_voice.ogg')
     update.message.reply_text(f'Got your voice! Its duration - {duration} sec, MIME type - {voice.mime_type}')
-    update.message.reply_text(generate_text_from_speech('test_voice.ogg'))
+    list_of_text = generate_text_from_long_speech('test_voice.ogg')
+    for text in list_of_text:
+
+        update.message.reply_text(text)
 
 
 
