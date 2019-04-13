@@ -28,10 +28,10 @@ def update_iam_token():
     
     result = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True)
     #print(result.returncode, result.stdout, result.stderr)
-    print(type(result.stdout))
-    print(result.stdout)
-    print(type(json.loads(result.stdout)))
-    print(json.loads(result.stdout)['iamToken'])
+    #print(type(result.stdout))
+    #print(result.stdout)
+    #print(type(json.loads(result.stdout)))
+    #print(json.loads(result.stdout)['iamToken'])
     new_iam_token = json.loads(result.stdout)['iamToken']
     os.environ['IAM_TOKEN'] = new_iam_token
 
@@ -100,9 +100,11 @@ def generate_text_from_speech(source_file):
     update_iam_token()
     token = os.getenv('IAM_TOKEN')
     voice_file = 'text_from_speach_single.wav'
-    subprocess.call(['sox', source_file, voice_file])
+    subprocess.call(['opusdec', '--force-wav', source_file, voice_file])
+    print(f'Converted {source_file} to {voice_file}')
+    #subprocess.call(['sox', source_file, voice_file])
     good_wav_file = prepare_wav(voice_file)
-
+    print(f'Prepared {good_wav_file} from {voice_file}')
     url = "https://stt.api.cloud.yandex.net/speech/v1/stt:recognize"
 
     with open(good_wav_file, 'rb') as f:
@@ -128,7 +130,9 @@ def generate_text_from_speech(source_file):
 
 def generate_text_from_long_speech(source_file):
     list_of_texts = []
-    subprocess.call(['sox', source_file, 'temp_wav_file.wav'])
+    subprocess.call(['opusdec', '--force-wav', source_file, 'temp_wav_file.wav'])
+    print(f'Converted {source_file} to temp_wav_file.wav')
+    #subprocess.call(['sox', source_file, 'temp_wav_file.wav'])
     file_size = os.path.getsize('temp_wav_file.wav')/1024
     print(f'File {source_file} size {file_size}')
     if  file_size < 1024:
