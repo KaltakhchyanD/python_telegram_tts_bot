@@ -1,4 +1,5 @@
 import argparse
+import json
 import os
 import requests
 import subprocess
@@ -7,12 +8,38 @@ import wave
 import check_wav_length 
 
 def update_iam_token():
-    pass
-    os.environ['IAM_TOKEN'] = 'something'
+    #headers = {
+    #    "Content-Type": "application/json"
+    #}
+    #data = json.dumps({"yandexPassportOauthToken": "AQAAAAAFBe16AATuweFg6nZ8dUXeu0-YIMJuZW8"})
+    #print(type(data))
+    #print(data)
+    #url = "https://iam.api.cloud.yandex.net/iam/v1/tokens"
+    #resp = requests.post(url, headers, data)
+    #if resp.status_code!= 200:
+    #    print(("Invalid response received: code: %d, message: %s" % (resp.status_code, resp.text)))
+    #    resp.raise_for_status()
+    #    #raise RuntimeError("Invalid response received: code: %d, message: %s" % (resp.status_code, resp.text))
+    #new_iam_token = resp.json()['iamToken']
+    #print(new_iam_token)
+    OauthToken = str(os.getenv('OauthToken'))
+    test_string = '{"yandexPassportOauthToken": "'+OauthToken+'"}'
+    command = ['curl', '-X', 'POST', '-H', 'Content-Type: application/json', '-d', test_string,  'https://iam.api.cloud.yandex.net/iam/v1/tokens']
+    
+    result = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True)
+    #print(result.returncode, result.stdout, result.stderr)
+    print(type(result.stdout))
+    print(result.stdout)
+    print(type(json.loads(result.stdout)))
+    print(json.loads(result.stdout)['iamToken'])
+    new_iam_token = json.loads(result.stdout)['iamToken']
+    os.environ['IAM_TOKEN'] = new_iam_token
 
 
 def synthesize_audio(folder_id, iam_token, text):
     url = 'https://tts.api.cloud.yandex.net/speech/v1/tts:synthesize'
+    update_iam_token()
+    iam_token = os.getenv('IAM_TOKEN')
     headers = {
         'Authorization': 'Bearer ' + iam_token,
     }
@@ -24,11 +51,7 @@ def synthesize_audio(folder_id, iam_token, text):
         'format': 'lpcm',
         'sampleRateHertz': 48000,
     }
-    try:
-        resp = requests.post(url, headers=headers, data=data)
-    except RuntimeError:
-        update_iam_token()
-        resp = requests.post(url, headers=headers, data=data)
+    resp = requests.post(url, headers=headers, data=data)
 
     if resp.status_code != 200:
         raise RuntimeError("Invalid response received: code: %d, message: %s" % (resp.status_code, resp.text))
@@ -74,6 +97,7 @@ def prepare_wav(source_file = 'test_voice.wav'):
 
 def generate_text_from_speech(source_file):
     folder_id = os.getenv('FOLDER_ID')
+    update_iam_token()
     token = os.getenv('IAM_TOKEN')
     voice_file = 'text_from_speach_single.wav'
     subprocess.call(['sox', source_file, voice_file])
@@ -94,6 +118,7 @@ def generate_text_from_speech(source_file):
         'folderId': folder_id
     }
 
+    update_iam_token()
     resp = requests.post( url, params=params, data = data, headers = headers)
 
     if resp.status_code != 200:
