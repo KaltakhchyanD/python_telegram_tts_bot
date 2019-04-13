@@ -28,7 +28,6 @@ def incomming_audio_handler(bot, update, user_data):
     update.message.reply_text(f'Got your voice! Its duration - {duration} sec, MIME type - {voice.mime_type}')
     list_of_text = generate_text_from_long_speech('test_voice.ogg')
     for text in list_of_text:
-
         update.message.reply_text(text)
 
 

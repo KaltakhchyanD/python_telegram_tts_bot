@@ -18,7 +18,7 @@ def get_duration(filename):
 
 
 def generate_small_files(source_wav):
-    subprocess.call(['sox', source_wav, 'new_small_file.wav', 'silence', '0', '1', '0.2', '2%', ':', 'newfile', ':', 'restart'])
+    subprocess.call(['sox', source_wav, 'new_small_file.wav', 'silence', '0', '1', '0.1', '2%', ':', 'newfile', ':', 'restart'])
     #subprocess.call(['sox', 'text_from_speach.wav', 'new_small_file.wav', 'silence', '0', '1', '0.2', '2%', ':', 'newfile', ':', 'restart'])
 
 
@@ -65,7 +65,7 @@ def do_the_thing(source_wav):
     delete_old_files()
     print('Splitting to small files')
     generate_small_files(source_wav)
-    
+
     not_empty_wav_files, list_of_names=prepare_some_files(source_wav)
 
 
