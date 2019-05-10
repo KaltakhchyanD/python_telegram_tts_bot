@@ -8,6 +8,8 @@ import subprocess
 
 
 def get_duration(filename):
+    """Get duration by divising number of frames to framerate with wave """
+
     with wave.open(filename) as wav_f:
         frames = wav_f.getnframes()
         rate = wav_f.getframerate()
@@ -19,6 +21,8 @@ def get_duration(filename):
 
 
 def generate_small_files(source_wav):
+    """Split wav audio on silence(silence is 0.1 sec of 2% of max volume(of sample?)) """
+
     subprocess.call(
         [
             "sox",
@@ -39,6 +43,15 @@ def generate_small_files(source_wav):
 
 
 def prepare_some_files(source_wav):
+    """
+    Pick nonempty wav files, create new wav file and return all that???
+
+    Get files if current dir
+    Get all wav files with certain name with duration>0.5s ??? names of result of splitting by silence
+    Create new wav file ???
+    Return list of not empty wav files and new one ???
+    """
+
     files_and_dirs_in_cwd = os.listdir(path=os.getcwd())
     not_empty_wav_files = [
         i
@@ -55,10 +68,13 @@ def prepare_some_files(source_wav):
 
 
 def get_file_name(list_of_names):
+    """Return last name from list of names ???"""
     return list_of_names[-1]
 
 
 def create_new_file_name(list_of_names):
+    """Create and append new filename to list of names by adding _1 to the last filename """
+
     last_name = get_file_name(list_of_names)
     new_name = last_name.split(".")[0] + "_1" + ".wav"
     with open(new_name, "w") as f:
@@ -67,10 +83,13 @@ def create_new_file_name(list_of_names):
 
 
 def get_size(filename):
+    """Get size of file in KB """
     return os.path.getsize(filename) / 1024
 
 
 def delete_old_files():
+    """Delete wav files that was created by split by silence and temp files ??? """
+
     files_and_dirs_in_cwd = os.listdir(path=os.getcwd())
     not_empty_wav_files = [i for i in sorted(files_and_dirs_in_cwd) if ".wav" in i]
     print(f"{len(not_empty_wav_files)} files to delete")
@@ -81,6 +100,15 @@ def delete_old_files():
 
 
 def do_the_thing(source_wav):
+    """
+    Split source wav file into files of size <1K
+
+    Clean up dir - delete old files
+    Split input wav file at silence
+    Add up small files into files of size <1K
+    Return list of filenames(that are <1K)
+    """
+
     print("Cleaning up")
     delete_old_files()
     print("Splitting to small files")
@@ -105,7 +133,7 @@ def do_the_thing(source_wav):
             create_new_file_name(list_of_names)
 
             current_file = get_file_name(list_of_names)
-            current_size = get_size(current_file)
+            # current_size = get_size(current_file)
 
         with open(current_file, "rb") as src_file_wav:
             src_data = src_file_wav.read()
