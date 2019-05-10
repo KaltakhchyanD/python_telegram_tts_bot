@@ -4,6 +4,13 @@ from yandex_tts import (
     generate_text_from_long_speech,
 )
 
+
+def send_audio(bot, update, user_data, audio_file):
+    """ Sends audio file to user"""
+    with open(audio_file, "rb") as f:
+        bot.send_audio(chat_id=update.message.chat_id, audio=f)
+
+
 """
     This module contains handlers used by telegram bot dispatcher at bot.py module.
     They are:
@@ -14,14 +21,9 @@ from yandex_tts import (
 
 
 def start_handler(bot, update, user_data):
+    """Send welcome message to user"""
     text = "Hi! This is Text2Speach test bot"
     update.message.reply_text(text)
-
-
-def send_audio(bot, update, user_data, audio_file):
-    """ Sends audio file to user"""
-    with open(audio_file, "rb") as f:
-        bot.send_audio(chat_id=update.message.chat_id, audio=f)
 
 
 def text_handler(bot, update, user_data):
@@ -33,7 +35,7 @@ def text_handler(bot, update, user_data):
 
 
 def incomming_audio_handler(bot, update, user_data):
-    """Get audiofile from message, generate texxt from it and send it back to user """
+    """Get audiofile from message, generate text from it and send it back to user """
     voice = update.message.voice
     voice_id = voice.file_id
     duration = voice.duration
