@@ -77,43 +77,26 @@ def synthesize_audio(folder_id, iam_token, text):
     return resp.content
 
 
-def convert_raw_to_wav(filename):
-    """
-    Read source raw file and write its content to destination wav file.
-
-    Read source raw file
-    Write destination wav file with wave
-    """
-
-    source_file = filename
-    dest_file = filename.split(".")[0] + "_test.wav"
-    with open(filename, "rb") as raw_file:
-        raw_data = raw_file.read()
-    with wave.open(dest_file, "wb") as wav_file:
-        wav_file.setparams((1, 2, 48000, 0, "NONE", "NONE"))
-        wav_file.writeframes(raw_data)
-    return dest_file
-
-
 def generate_speech_from_text(text):
     """
     Generate wav audio file from input text.
 
     Get params from env variables
     Get audio content from input text with synthesize_audio()
-    Write it to raw file
-    Convert raw to wav with convert_raw_to_wav()
+    Write it to wav file
     Return result wav file
     """
 
     folder_id = os.getenv("FOLDER_ID")
     token = os.getenv("IAM_TOKEN")
-    output = "speech.raw"
+    output_file = "tts_output.wav"
 
     audio_content = synthesize_audio(folder_id, token, text)
-    with open(output, "wb") as f:
-        f.write(audio_content)
-    output_file = convert_raw_to_wav("speech.raw")
+
+    with wave.open(output_file, "wb") as wav_file:
+        wav_file.setparams((1, 2, 48000, 0, "NONE", "NONE"))
+        wav_file.writeframes(audio_content)
+
     return output_file
 
 
