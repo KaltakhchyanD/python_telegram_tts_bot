@@ -127,27 +127,15 @@ def synthesize_text_from_audio(source_file):
 
     Update IAM token
     Get params from env variables
-    Convert source wav to wav with sox ???
-    Set right params to converted wav with prepare_wav()
     Send POST request to Yandex STT service
     Return generated text from response
     """
 
-    folder_id = os.getenv("FOLDER_ID")
     update_iam_token()
+    folder_id = os.getenv("FOLDER_ID")
     token = os.getenv("IAM_TOKEN")
-    voice_file = "text_from_speach_single.wav"
 
-    # subprocess.call(['opusdec','--rate 48000', '--force-wav', source_file, voice_file])
-    subprocess.call(["sox", source_file, voice_file])
-    print(f"Converted {source_file} to {voice_file}")
-
-    good_wav_file = prepare_wav(voice_file)
-    print(
-        f"Prepared {good_wav_file} from {voice_file} of size {os.path.getsize(good_wav_file)/1024}"
-    )
-
-    with open(good_wav_file, "rb") as f:
+    with open(source_file, "rb") as f:
         data = f.read()
 
     url = "https://stt.api.cloud.yandex.net/speech/v1/stt:recognize"
@@ -164,19 +152,13 @@ def synthesize_text_from_audio(source_file):
 
 
 def convert_from_ogg_to_wav(ogg_audio_file):
+    """Take ogg audio file and convert it to wav audio file."""
     wav_from_ogg = "temp_wav_file.wav"
     subprocess.call(
         ["opusdec", "--rate", "48000", "--force-wav", ogg_audio_file, wav_from_ogg]
     )
     # subprocess.call(['sox', ogg_audio_file, wav_from_ogg])
     print(f"Converted {ogg_audio_file} to {wav_from_ogg}")
-
-    file_size = os.path.getsize(wav_from_ogg) / 1024
-    print(f"File {wav_from_ogg} first size {file_size}")
-
-    # ??? Function prepare_wav returns file, should assign this value to some var
-    prepare_wav(wav_from_ogg)
-
     return wav_from_ogg
 
 
