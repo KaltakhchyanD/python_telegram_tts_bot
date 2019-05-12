@@ -23,6 +23,17 @@ def get_duration(filename):
 # not_empty_wav_files = [i for i in sorted(files_and_dirs_in_cwd) if '.wav' in i and get_duration(i)>=0.5 and i !=  'new_test_voice.wav'    and i != 'text_from_speach.wav' and i != 'speech_test.wav']
 
 
+def convert_from_ogg_to_wav(ogg_audio_file):
+    """Take ogg audio file and convert it to wav audio file."""
+    wav_from_ogg = "temp_wav_file.wav"
+    subprocess.call(
+        ["opusdec", "--rate", "48000", "--force-wav", ogg_audio_file, wav_from_ogg]
+    )
+    # subprocess.call(['sox', ogg_audio_file, wav_from_ogg])
+    print(f"Converted {ogg_audio_file} to {wav_from_ogg}")
+    return wav_from_ogg
+
+
 def generate_small_files(source_wav):
     """Split wav audio on silence(silence is 0.1 sec of 2% of max volume(of sample?))."""
     subprocess.call(
@@ -95,7 +106,7 @@ def delete_old_files():
     print(f"{len(not_empty_wav_files)} files to delete")
     for filename in not_empty_wav_files:
         if "new_small_file" in filename or "generated_audio_file" in filename:
-            print(f"Deleting file {filename}")
+            # print(f"Deleting file {filename}")
             os.remove(filename)
 
 
@@ -111,6 +122,9 @@ def do_the_thing(source_wav):
 
     print("Cleaning up")
     delete_old_files()
+    if get_size(source_wav) < 1024:
+        return [source_wav]
+
     print("Splitting to small files")
     generate_small_files(source_wav)
 

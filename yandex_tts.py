@@ -151,22 +151,11 @@ def synthesize_text_from_audio(source_file):
     return resp.json()["result"]
 
 
-def convert_from_ogg_to_wav(ogg_audio_file):
-    """Take ogg audio file and convert it to wav audio file."""
-    wav_from_ogg = "temp_wav_file.wav"
-    subprocess.call(
-        ["opusdec", "--rate", "48000", "--force-wav", ogg_audio_file, wav_from_ogg]
-    )
-    # subprocess.call(['sox', ogg_audio_file, wav_from_ogg])
-    print(f"Converted {ogg_audio_file} to {wav_from_ogg}")
-    return wav_from_ogg
-
-
 def generate_text_from_speech(source_file):
     """
     Create list of texts generated from input ogg audio file with Yandex STT and return that list.
 
-    Convert input ogg audio file to wav with convert_from_ogg_to_wav()
+    Convert input ogg audio file to wav with check_wav_length.convert_from_ogg_to_wav()
     Create list of files smaller than 1K from converted wav file
     For every file in list:
         Generate text from audio with synthesize_text_from_audio()
@@ -176,7 +165,7 @@ def generate_text_from_speech(source_file):
 
     list_of_texts = []
     result_text = ""
-    wav_from_ogg = convert_from_ogg_to_wav(source_file)
+    wav_from_ogg = check_wav_length.convert_from_ogg_to_wav(source_file)
     print("OGG TO WAV - SUCCESS")
     list_of_audio_files = check_wav_length.do_the_thing(wav_from_ogg)
     print("BIG TO SMALL - SUCCESS")
