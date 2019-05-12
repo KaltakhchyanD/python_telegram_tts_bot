@@ -6,3 +6,4 @@ settings.py
 env_local.sh
 
 *.wav
+*.og*
