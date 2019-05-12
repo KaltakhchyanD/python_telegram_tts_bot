@@ -1,3 +1,11 @@
+"""
+This module contains provides ability to perform TTS and STT with Yandex TTS and STT services.
+
+It contains these functions:
+generate_speech_from_text() - returns wav audio synthesized from input text
+generate_text_from_long_speech() - returns text generated from input ogg audio
+"""
+
 import argparse
 import json
 import os
@@ -10,7 +18,7 @@ import check_wav_length
 
 def update_iam_token():
     """
-    Update IAM token and update env var of it
+    Update IAM token and update env var of it.
 
     Get OauthToken from env var
     Get IAM token with curl using subprocess
@@ -39,7 +47,7 @@ def update_iam_token():
 
 def synthesize_audio(folder_id, iam_token, text):
     """
-    Send text to Yandex TTS and return audio content from response
+    Send text to Yandex TTS and return audio content from response.
 
     Update IAM token with update_iam_token()
     Send POST request to Yandex TTS service
@@ -71,11 +79,12 @@ def synthesize_audio(folder_id, iam_token, text):
 
 def convert_raw_to_wav(filename):
     """
-    Read source raw file and write its content to destination wav file
+    Read source raw file and write its content to destination wav file.
 
     Read source raw file
     Write destination wav file with wave
     """
+
     source_file = filename
     dest_file = filename.split(".")[0] + "_test.wav"
     with open(filename, "rb") as raw_file:
@@ -88,7 +97,7 @@ def convert_raw_to_wav(filename):
 
 def generate_speech_from_text(text):
     """
-    Generate wav audio file from input text
+    Generate wav audio file from input text.
 
     Get params from env variables
     Get audio content from input text with synthesize_audio()
@@ -110,12 +119,13 @@ def generate_speech_from_text(text):
 
 def prepare_wav(source_file="test_voice.wav"):
     """
-    Set right parameters to input wav file
+    Set right parameters to input wav file.
 
     Read source wav file
     Write dest wav file with right params with wave
     Return dest file
     """
+
     dest_file = "new_test_voice.wav"
 
     with open(source_file, "rb") as src_file_wav:
@@ -130,7 +140,7 @@ def prepare_wav(source_file="test_voice.wav"):
 
 def generate_text_from_speech(source_file):
     """
-    Generate text from input wav audio file
+    Generate text from input wav audio file.
 
     Get params from env variables
     Update IAM token
@@ -179,7 +189,7 @@ def generate_text_from_speech(source_file):
 
 def generate_text_from_long_speech(source_file):
     """
-    Create list of texts generated from input ogg audio file with Yandex STT and return that list
+    Create list of texts generated from input ogg audio file with Yandex STT and return that list.
 
     Convert input ogg audio file to wav with 48K bit rate with opusdec ???
     Set right params to converted wav with prepare_wav() ???
@@ -227,7 +237,7 @@ def generate_text_from_long_speech(source_file):
 
 def test_from_ogg_to_wav(source_file):
     """
-    Compare sizes of result files converted from ogg to wav with opus and sox
+    Compare sizes of result files converted from ogg to wav with opus and sox.
 
     Convert input ogg file to wav file with opusdec
     Convert from input ogg file to dest wav file with sox
