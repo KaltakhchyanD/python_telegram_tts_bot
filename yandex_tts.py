@@ -3,7 +3,7 @@ This module contains provides ability to perform TTS and STT with Yandex TTS and
 
 It contains these functions:
 generate_speech_from_text() - returns wav audio synthesized from input text
-generate_text_from_long_speech() - returns text generated from input ogg audio
+generate_text_from_speech() - returns text generated from input ogg audio
 """
 
 import argparse
@@ -121,15 +121,14 @@ def prepare_wav(source_file="test_voice.wav"):
     return dest_file
 
 
-def generate_text_from_speech(source_file):
+def synthesize_text_from_audio(source_file):
     """
-    Generate text from input wav audio file.
+    Synthesize text from input wav audio file.
 
-    Get params from env variables
     Update IAM token
+    Get params from env variables
     Convert source wav to wav with sox ???
     Set right params to converted wav with prepare_wav()
-    Update IAM token ???
     Send POST request to Yandex STT service
     Return generated text from response
     """
@@ -140,26 +139,20 @@ def generate_text_from_speech(source_file):
     voice_file = "text_from_speach_single.wav"
 
     # subprocess.call(['opusdec','--rate 48000', '--force-wav', source_file, voice_file])
-    print(f"Converted {source_file} to {voice_file}")
     subprocess.call(["sox", source_file, voice_file])
+    print(f"Converted {source_file} to {voice_file}")
 
     good_wav_file = prepare_wav(voice_file)
     print(
         f"Prepared {good_wav_file} from {voice_file} of size {os.path.getsize(good_wav_file)/1024}"
     )
 
-    url = "https://stt.api.cloud.yandex.net/speech/v1/stt:recognize"
-
     with open(good_wav_file, "rb") as f:
         data = f.read()
 
+    url = "https://stt.api.cloud.yandex.net/speech/v1/stt:recognize"
     headers = {"Authorization": "Bearer " + token}
-
     params = {"format": "lpcm", "sampleRateHertz": 48000, "folderId": folder_id}
-
-    # ???
-    update_iam_token()
-
     resp = requests.post(url, params=params, data=data, headers=headers)
 
     if resp.status_code != 200:
@@ -170,52 +163,45 @@ def generate_text_from_speech(source_file):
     return resp.json()["result"]
 
 
-def generate_text_from_long_speech(source_file):
+def convert_from_ogg_to_wav(ogg_audio_file):
+    wav_from_ogg = "temp_wav_file.wav"
+    subprocess.call(
+        ["opusdec", "--rate", "48000", "--force-wav", ogg_audio_file, wav_from_ogg]
+    )
+    # subprocess.call(['sox', ogg_audio_file, wav_from_ogg])
+    print(f"Converted {ogg_audio_file} to {wav_from_ogg}")
+
+    file_size = os.path.getsize(wav_from_ogg) / 1024
+    print(f"File {wav_from_ogg} first size {file_size}")
+
+    # ??? Function prepare_wav returns file, should assign this value to some var
+    prepare_wav(wav_from_ogg)
+
+    return wav_from_ogg
+
+
+def generate_text_from_speech(source_file):
     """
     Create list of texts generated from input ogg audio file with Yandex STT and return that list.
 
-    Convert input ogg audio file to wav with 48K bit rate with opusdec ???
-    Set right params to converted wav with prepare_wav() ???
-    Print file size before and after prepare_wav() ???
-    If size after is less than 1K:
-        Generate text from this audio
-        Assign result list to this text
-    Else:
-        Split big file in files <1K with check_wav_length ???
-        For every small file:
-            Generate text from audio with generate_text_from_speech()
-            Append text to result list
-    Return result list
+    Convert input ogg audio file to wav with convert_from_ogg_to_wav()
+    Create list of files smaller than 1K from converted wav file
+    For every file in list:
+        Generate text from audio with synthesize_text_from_audio()
+        Add it to result text
+    Return result text
     """
 
     list_of_texts = []
-    subprocess.call(
-        ["opusdec", "--rate", "48000", "--force-wav", source_file, "temp_wav_file.wav"]
-    )
-    # subprocess.call(['sox', source_file, 'temp_wav_file.wav'])
-    print(f"Converted {source_file} to temp_wav_file.wav")
-
-    file_size = os.path.getsize("temp_wav_file.wav") / 1024
-    print(f"File temp_wav_file.wav first size {file_size}")
-
-    # ??? Function prepare_wav returns file, should assign this value to some var
-    prepare_wav("temp_wav_file.wav")
-    file_size = os.path.getsize("temp_wav_file.wav") / 1024
-    print(f"Preparing file temp_wav_file.wav, new size {file_size}")
-
-    if file_size < 1024:
-        print("File is small, generating text")
-        list_of_texts = [generate_text_from_speech("temp_wav_file.wav")]
-        print(f"Generated text of length {len(list_of_texts[0])}")
-    else:
-        print("File is large, splitting it then generating text")
-        list_of_audio_files = check_wav_length.do_the_thing("temp_wav_file.wav")
-        print(f"Splitted temp_wav_file.wav into {list_of_audio_files}")
-        for file in list_of_audio_files:
-            print(f"Generating text from {file}")
-            list_of_texts.append(generate_text_from_speech(file))
-            print(f"New text length is {len(list_of_texts[-1])}")
-    return list_of_texts
+    result_text = ""
+    wav_from_ogg = convert_from_ogg_to_wav(source_file)
+    print("OGG TO WAV - SUCCESS")
+    list_of_audio_files = check_wav_length.do_the_thing(wav_from_ogg)
+    print("BIG TO SMALL - SUCCESS")
+    for file in list_of_audio_files:
+        result_text += synthesize_text_from_audio(file)
+    print("VOICE TO TEXT - SUCCESS")
+    return result_text
 
 
 def test_from_ogg_to_wav(source_file):
@@ -252,6 +238,6 @@ def test_from_ogg_to_wav(source_file):
 
 if __name__ == "__main__":
     # generate_speech_from_text('Hello world')
-    for text in generate_text_from_long_speech("test_voice.ogg"):
+    for text in generate_text_from_speech("test_voice.ogg"):
         print(text)
     # test_from_ogg_to_wav('test_voice.ogg')
