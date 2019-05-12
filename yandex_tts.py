@@ -45,7 +45,7 @@ def update_iam_token():
     os.environ["IAM_TOKEN"] = new_iam_token
 
 
-def synthesize_audio(folder_id, iam_token, text):
+def synthesize_audio_from_text(folder_id, iam_token, text):
     """
     Send text to Yandex TTS and return audio content from response.
 
@@ -82,22 +82,22 @@ def generate_speech_from_text(text):
     Generate wav audio file from input text.
 
     Get params from env variables
-    Get audio content from input text with synthesize_audio()
+    Get audio content from input text with synthesize_audio_from_text()
     Write it to wav file
     Return result wav file
     """
 
     folder_id = os.getenv("FOLDER_ID")
     token = os.getenv("IAM_TOKEN")
-    output_file = "tts_output.wav"
+    output_wav_file = "tts_output.wav"
 
-    audio_content = synthesize_audio(folder_id, token, text)
+    audio_content = synthesize_audio_from_text(folder_id, token, text)
 
-    with wave.open(output_file, "wb") as wav_file:
+    with wave.open(output_wav_file, "wb") as wav_file:
         wav_file.setparams((1, 2, 48000, 0, "NONE", "NONE"))
         wav_file.writeframes(audio_content)
 
-    return output_file
+    return output_wav_file
 
 
 def prepare_wav(source_file="test_voice.wav"):
