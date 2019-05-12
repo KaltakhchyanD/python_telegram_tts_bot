@@ -40,7 +40,7 @@ def voice_handler(bot, update, user_data):
     voice_file = voice.get_file()
     voice_file.download("audio_from_telegram.ogg")
     update.message.reply_text(
-        f"Got your voice! Its duration - {duration} sec, MIME type - {voice.mime_type}"
+        f"Got your voice! Its duration - {duration} sec, MIME type - {voice.mime_type}\n"
         + "Now i will generate text from it!"
     )
     text = generate_text_from_speech("audio_from_telegram.ogg")

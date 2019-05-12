@@ -219,7 +219,5 @@ def test_from_ogg_to_wav(source_file):
 
 
 if __name__ == "__main__":
-    # generate_speech_from_text('Hello world')
-    for text in generate_text_from_speech("test_voice.ogg"):
-        print(text)
-    # test_from_ogg_to_wav('test_voice.ogg')
+    test_one = generate_text_from_speech("test_voice.ogg")
+    print(test_one)
