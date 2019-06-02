@@ -167,7 +167,7 @@ def generate_text_from_speech(source_file):
     result_text = ""
     wav_from_ogg = check_wav_length.convert_from_ogg_to_wav(source_file)
     print("OGG TO WAV - SUCCESS")
-    list_of_audio_files = check_wav_length.do_the_thing(wav_from_ogg)
+    list_of_audio_files = check_wav_length.split_into_files_less_than_1k(wav_from_ogg)
     print("BIG TO SMALL - SUCCESS")
     for file in list_of_audio_files:
         result_text += synthesize_text_from_audio(file)
