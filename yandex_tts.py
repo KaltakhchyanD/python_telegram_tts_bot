@@ -184,6 +184,10 @@ def test_from_ogg_to_wav(source_file):
     Print sizes of converted files
     Print size comparison
     """
+    from pydub import AudioSegment
+
+    from_ogg_pydub = AudioSegment.from_ogg(source_file)
+    from_ogg_pydub.export("convert_with_pydub.wav", bitrate="48k",format="wav")
 
     subprocess.call(
         [
@@ -199,8 +203,11 @@ def test_from_ogg_to_wav(source_file):
 
     file_size_opus = os.path.getsize("convert_with_opusdec.wav") / 1024
     file_size_sox = os.path.getsize("convert_with_sox.wav") / 1024
+    file_size_pydub = os.path.getsize("convert_with_pydub.wav") / 1024
+
     print(f"Opusdec size {file_size_opus}")
     print(f"Sox size {file_size_sox}")
+    print(f"Pydub size {file_size_pydub}")
     if file_size_opus == file_size_sox:
         print("Sizes of opus and sox converted files - EQUAL")
     else:
@@ -208,5 +215,6 @@ def test_from_ogg_to_wav(source_file):
 
 
 if __name__ == "__main__":
-    test_one = generate_text_from_speech("test_voice.ogg")
-    print(test_one)
+    #test_one = generate_text_from_speech("test_voice.ogg")
+    #print(test_one)
+    test_from_ogg_to_wav("test_voice.ogg")
