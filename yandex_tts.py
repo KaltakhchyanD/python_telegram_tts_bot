@@ -21,28 +21,43 @@ def update_iam_token():
     Update IAM token and update env var of it.
 
     Get OauthToken from env var
-    Get IAM token with curl using subprocess
+    Get IAM token with requests
     Update IAM token env var
     """
 
     OauthToken = str(os.getenv("OauthToken"))
     OauthToken_string = '{"yandexPassportOauthToken": "' + OauthToken + '"}'
-    command = [
-        "curl",
-        "-X",
-        "POST",
-        "-H",
-        "Content-Type: application/json",
-        "-d",
-        OauthToken_string,
-        "https://iam.api.cloud.yandex.net/iam/v1/tokens",
-    ]
+    # command = [
+    #    "curl",
+    #    "-X",
+    #    "POST",
+    #    "-H",
+    #    "Content-Type: application/json",
+    #    "-d",
+    #    OauthToken_string,
+    #    "https://iam.api.cloud.yandex.net/iam/v1/tokens",
+    # ]
+    # -X - uses POST instead od default GET
+    # -H - set custom header or replace the one with same name
+    # -d - data for POST
+    url = "https://iam.api.cloud.yandex.net/iam/v1/tokens"
+    data = {"yandexPassportOauthToken": OauthToken}
+    headers = {"Content-Type": "application/json"}
 
-    result = subprocess.run(
-        command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True
-    )
-    new_iam_token = json.loads(result.stdout)["iamToken"]
+    resp = requests.post(url, headers=headers, data=json.dumps(data))
+
+    if resp.status_code != 200:
+        raise RuntimeError(
+            "Invalid response received: code: %d, message: %s"
+            % (resp.status_code, resp.text)
+        )
+    new_iam_token = resp.json()["iamToken"]
     os.environ["IAM_TOKEN"] = new_iam_token
+
+    # result = subprocess.run(
+    #    command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True
+    # )
+    # new_iam_token = json.loads(result.stdout)["iamToken"]
 
 
 def synthesize_audio_from_text(folder_id, iam_token, text):
@@ -187,7 +202,7 @@ def test_from_ogg_to_wav(source_file):
     from pydub import AudioSegment
 
     from_ogg_pydub = AudioSegment.from_ogg(source_file)
-    from_ogg_pydub.export("convert_with_pydub.wav", bitrate="48k",format="wav")
+    from_ogg_pydub.export("convert_with_pydub.wav", bitrate="48k", format="wav")
 
     subprocess.call(
         [
@@ -215,6 +230,6 @@ def test_from_ogg_to_wav(source_file):
 
 
 if __name__ == "__main__":
-    #test_one = generate_text_from_speech("test_voice.ogg")
-    #print(test_one)
+    # test_one = generate_text_from_speech("test_voice.ogg")
+    # print(test_one)
     test_from_ogg_to_wav("test_voice.ogg")
