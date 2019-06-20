@@ -27,19 +27,7 @@ def update_iam_token():
 
     OauthToken = str(os.getenv("OauthToken"))
     OauthToken_string = '{"yandexPassportOauthToken": "' + OauthToken + '"}'
-    # command = [
-    #    "curl",
-    #    "-X",
-    #    "POST",
-    #    "-H",
-    #    "Content-Type: application/json",
-    #    "-d",
-    #    OauthToken_string,
-    #    "https://iam.api.cloud.yandex.net/iam/v1/tokens",
-    # ]
-    # -X - uses POST instead od default GET
-    # -H - set custom header or replace the one with same name
-    # -d - data for POST
+
     url = "https://iam.api.cloud.yandex.net/iam/v1/tokens"
     data = {"yandexPassportOauthToken": OauthToken}
     headers = {"Content-Type": "application/json"}
@@ -53,11 +41,6 @@ def update_iam_token():
         )
     new_iam_token = resp.json()["iamToken"]
     os.environ["IAM_TOKEN"] = new_iam_token
-
-    # result = subprocess.run(
-    #    command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True
-    # )
-    # new_iam_token = json.loads(result.stdout)["iamToken"]
 
 
 def synthesize_audio_from_text(folder_id, iam_token, text):
