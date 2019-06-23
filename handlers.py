@@ -2,12 +2,36 @@
 This module contains handlers used by telegram bot dispatcher at bot.py module.
     
 They are:
+conversation - instance of ConversationHandler, that contains all internal handlers and internal states.
+States are required for handlers to work in appropriate context(for example to separate language change from 
+text input to generate speech from it).
+
+There are internal handlers:
 start_handler - this is called when /start commend is sent to bot
 text_handler - this is called when text message is sent to bot
 voice_handler - this is called when audio message is sent to bot
-"""
+lang_handler - goes to state to change current language of text/speech to recognize 
+eng_text_handler - changes lang to eng
+rus_text_handler - changes lang to rus
 
-from yandex_tts import generate_audio_file_from_text, generate_text_from_speech
+Internal states are self explainatory
+"""
+import re
+
+from telegram import ReplyKeyboardMarkup, ReplyKeyboardRemove
+from telegram.ext import (
+    CommandHandler,
+    MessageHandler,
+    RegexHandler,
+    ConversationHandler,
+    Filters,
+)
+
+from yandex_tts import (
+    generate_audio_file_from_text,
+    generate_text_from_speech,
+    change_current_lang,
+)
 
 
 def send_audio(bot, update, user_data, audio_file):
@@ -20,6 +44,7 @@ def start_handler(bot, update, user_data):
     """Send welcome message to user."""
     text = "Hi! This is Text2Speach test bot"
     update.message.reply_text(text)
+    return "default_state"
 
 
 def text_handler(bot, update, user_data):
@@ -45,3 +70,43 @@ def voice_handler(bot, update, user_data):
     )
     text = generate_text_from_speech("audio_from_telegram.ogg")
     update.message.reply_text(text)
+
+
+def lang_handler(bot, update, user_data):
+    """Set state to change current language of text/speech to recognize """
+    keyboard = ReplyKeyboardMarkup([["Eng"], ["Rus"]])
+    update.message.reply_text(
+        "Choose language of the text you are typing", reply_markup=keyboard
+    )
+    return "lang_choise_state"
+
+
+def eng_text_handler(bot, update, user_data):
+    """Changes lang to eng"""
+    update.message.reply_text("Changed lang to eng", reply_markup=ReplyKeyboardRemove())
+    change_current_lang("en-US")
+    return "default_state"
+
+
+def rus_text_handler(bot, update, user_data):
+    """Changes lang to rus"""
+    update.message.reply_text("Changed lang to rus", reply_markup=ReplyKeyboardRemove())
+    change_current_lang("ru-RU")
+    return "default_state"
+
+
+conversation = ConversationHandler(
+    entry_points=[CommandHandler("start", start_handler, pass_user_data=True)],
+    states={
+        "default_state": [
+            MessageHandler(Filters.text, text_handler, pass_user_data=True),
+            MessageHandler(Filters.voice, voice_handler, pass_user_data=True),
+            CommandHandler("lang", lang_handler, pass_user_data=True),
+        ],
+        "lang_choise_state": [
+            RegexHandler("^(Eng)$", eng_text_handler, pass_user_data=True),
+            RegexHandler("^(Rus)$", rus_text_handler, pass_user_data=True),
+        ],
+    },
+    fallbacks=[],
+)

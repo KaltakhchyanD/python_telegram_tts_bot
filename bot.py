@@ -2,9 +2,9 @@ import logging
 import os
 
 import sentry_sdk
-from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
+from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, RegexHandler
 
-from handlers import start_handler, text_handler, voice_handler
+from handlers import start_handler, text_handler, voice_handler, conversation
 from settings import PROXY
 
 logging.basicConfig(
@@ -22,12 +22,7 @@ sentry_sdk.init("https://aaa48c902161413c80612b49c2b7897b@sentry.io/1423053")
 def main():
     tts_bot = Updater(os.getenv("API_KEY_BOT"), request_kwargs=PROXY)
     dp = tts_bot.dispatcher
-    dp.add_handler(CommandHandler("start", start_handler, pass_user_data=True))
-    dp.add_handler(MessageHandler(Filters.text, text_handler, pass_user_data=True))
-    dp.add_handler(
-        MessageHandler(Filters.voice, voice_handler, pass_user_data=True)
-    )
-
+    dp.add_handler(conversation)
     tts_bot.start_polling()
     tts_bot.idle()
 
