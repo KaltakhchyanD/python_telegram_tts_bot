@@ -2,7 +2,7 @@
 This module contains provides ability to perform TTS and STT with Yandex TTS and STT services.
 
 It contains these functions:
-generate_speech_from_text() - returns wav audio synthesized from input text
+generate_audio_file_from_text() - returns wav audio synthesized from input text
 generate_text_from_speech() - returns text generated from input ogg audio
 """
 
@@ -43,7 +43,7 @@ def update_iam_token():
     os.environ["IAM_TOKEN"] = new_iam_token
 
 
-def synthesize_audio_from_text(folder_id, iam_token, text):
+def synthesize_audio_content_from_text(folder_id, iam_token, text):
     """
     Send text to Yandex TTS and return audio content from response.
 
@@ -75,12 +75,12 @@ def synthesize_audio_from_text(folder_id, iam_token, text):
     return resp.content
 
 
-def generate_speech_from_text(text):
+def generate_audio_file_from_text(text):
     """
     Generate wav audio file from input text.
 
     Get params from env variables
-    Get audio content from input text with synthesize_audio_from_text()
+    Get audio content from input text with synthesize_audio_content_from_text()
     Write it to wav file
     Return result wav file
     """
@@ -89,7 +89,7 @@ def generate_speech_from_text(text):
     token = os.getenv("IAM_TOKEN")
     output_wav_file = "tts_output.wav"
 
-    audio_content = synthesize_audio_from_text(folder_id, token, text)
+    audio_content = synthesize_audio_content_from_text(folder_id, token, text)
 
     with wave.open(output_wav_file, "wb") as wav_file:
         wav_file.setparams((1, 2, 48000, 0, "NONE", "NONE"))
@@ -98,7 +98,7 @@ def generate_speech_from_text(text):
     return output_wav_file
 
 
-def prepare_wav(source_file="test_voice.wav"):
+def set_right_params_to_wav(source_file="test_voice.wav"):
     """
     Set right parameters to input wav file.
 
@@ -119,7 +119,7 @@ def prepare_wav(source_file="test_voice.wav"):
     return dest_file
 
 
-def synthesize_text_from_audio(source_file):
+def synthesize_text_from_audio_file(source_file):
     """
     Synthesize text from input wav audio file.
 
@@ -156,7 +156,7 @@ def generate_text_from_speech(source_file):
     Convert input ogg audio file to wav with check_wav_length.convert_from_ogg_to_wav()
     Create list of files smaller than 1K from converted wav file
     For every file in list:
-        Generate text from audio with synthesize_text_from_audio()
+        Generate text from audio with synthesize_text_from_audio_file()
         Add it to result text
     Return result text
     """
@@ -168,7 +168,7 @@ def generate_text_from_speech(source_file):
     list_of_audio_files = check_wav_length.split_into_files_less_than_1k(wav_from_ogg)
     print("BIG TO SMALL - SUCCESS")
     for file in list_of_audio_files:
-        result_text += synthesize_text_from_audio(file)
+        result_text += synthesize_text_from_audio_file(file)
     print("VOICE TO TEXT - SUCCESS")
     return result_text
 

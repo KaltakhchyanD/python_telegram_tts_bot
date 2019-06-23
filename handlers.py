@@ -7,7 +7,7 @@ text_handler - this is called when text message is sent to bot
 voice_handler - this is called when audio message is sent to bot
 """
 
-from yandex_tts import generate_speech_from_text, generate_text_from_speech
+from yandex_tts import generate_audio_file_from_text, generate_text_from_speech
 
 
 def send_audio(bot, update, user_data, audio_file):
@@ -26,7 +26,7 @@ def text_handler(bot, update, user_data):
     """Get text from message, generate audio and send it to user."""
     user_text = update.message.text
     update.message.reply_text("Got your text!\nNow i will generate an audio file!")
-    audio_file = generate_speech_from_text(user_text)
+    audio_file = generate_audio_file_from_text(user_text)
     send_audio(bot, update, user_data, audio_file)
 
 

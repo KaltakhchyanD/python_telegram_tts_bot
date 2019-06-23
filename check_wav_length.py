@@ -12,7 +12,8 @@ import subprocess
 
 from pydub import AudioSegment
 
-def get_duration(filename):
+
+def get_audio_file_duration(filename):
     """Get duration by divising number of frames to framerate with wave."""
     # this is hack i think, should revisit later
     duration = 0
@@ -32,13 +33,12 @@ def get_size_in_kb(filename):
 def convert_from_ogg_to_wav(ogg_audio_file):
     """Take ogg audio file and convert it to wav audio file."""
     wav_from_ogg = "temp_wav_file.wav"
-    #subprocess.call(
+    # subprocess.call(
     #    ["opusdec", "--rate", "48000", "--force-wav", ogg_audio_file, wav_from_ogg]
-    #)
+    # )
 
     from_ogg_pydub = AudioSegment.from_ogg(ogg_audio_file)
-    from_ogg_pydub.export(wav_from_ogg, bitrate="48k",format="wav")
-
+    from_ogg_pydub.export(wav_from_ogg, bitrate="48k", format="wav")
 
     # subprocess.call(['sox', ogg_audio_file, wav_from_ogg])
     print(f"Converted {ogg_audio_file} to {wav_from_ogg}")
@@ -84,7 +84,7 @@ def find_not_empty_files(name_pattern):
     not_empty_wav_files = [
         i
         for i in sorted(files_and_dirs_in_cwd)
-        if ".wav" in i and get_duration(i) >= 0.5 and name_pattern in i
+        if ".wav" in i and get_audio_file_duration(i) >= 0.5 and name_pattern in i
     ]
 
     print(f"NOT EMPTY FILES {not_empty_wav_files}")
