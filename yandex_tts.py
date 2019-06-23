@@ -4,6 +4,7 @@ This module contains provides ability to perform TTS and STT with Yandex TTS and
 It contains these functions:
 generate_audio_file_from_text() - returns wav audio synthesized from input text
 generate_text_from_speech() - returns text generated from input ogg audio
+change_current_lang() - changes current of text/speech recognition
 """
 
 import argparse
@@ -14,6 +15,10 @@ import subprocess
 import wave
 
 import check_wav_length
+
+
+CURRENT_LANG = "en-US"
+# ru-RU
 
 
 def update_iam_token():
@@ -43,6 +48,12 @@ def update_iam_token():
     os.environ["IAM_TOKEN"] = new_iam_token
 
 
+def change_current_lang(lang):
+    """Change current language of text/speech recognition"""
+    global CURRENT_LANG
+    CURRENT_LANG = lang
+
+
 def synthesize_audio_content_from_text(folder_id, iam_token, text):
     """
     Send text to Yandex TTS and return audio content from response.
@@ -59,7 +70,7 @@ def synthesize_audio_content_from_text(folder_id, iam_token, text):
 
     data = {
         "text": text,
-        "lang": "en-US",
+        "lang": CURRENT_LANG,
         "folderId": folder_id,
         "format": "lpcm",
         "sampleRateHertz": 48000,
@@ -138,7 +149,12 @@ def synthesize_text_from_audio_file(source_file):
 
     url = "https://stt.api.cloud.yandex.net/speech/v1/stt:recognize"
     headers = {"Authorization": "Bearer " + token}
-    params = {"format": "lpcm", "sampleRateHertz": 48000, "folderId": folder_id}
+    params = {
+        "format": "lpcm",
+        "sampleRateHertz": 48000,
+        "folderId": folder_id,
+        "lang": CURRENT_LANG,
+    }
     resp = requests.post(url, params=params, data=data, headers=headers)
 
     if resp.status_code != 200:
