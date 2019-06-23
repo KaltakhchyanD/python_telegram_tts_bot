@@ -95,6 +95,16 @@ def rus_text_handler(bot, update, user_data):
     return "default_state"
 
 
+def help_handler(bot, update):
+    update.message.reply_text(
+        "Hi! I will help you generate text from speech and visa versa.\n"
+        + "To generate speech just send me some text.\n"
+        + "If you whant generate text - record or forward me audio message.\n"
+        + "To change language - use command /lang.\n"
+        + "If something went wrong - try /start commant again"
+    )
+
+
 conversation = ConversationHandler(
     entry_points=[CommandHandler("start", start_handler, pass_user_data=True)],
     states={
@@ -102,6 +112,7 @@ conversation = ConversationHandler(
             MessageHandler(Filters.text, text_handler, pass_user_data=True),
             MessageHandler(Filters.voice, voice_handler, pass_user_data=True),
             CommandHandler("lang", lang_handler, pass_user_data=True),
+            CommandHandler("help", help_handler),
         ],
         "lang_choise_state": [
             RegexHandler("^(Eng)$", eng_text_handler, pass_user_data=True),
