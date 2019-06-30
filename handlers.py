@@ -11,8 +11,8 @@ start_handler - this is called when /start commend is sent to bot
 text_handler - this is called when text message is sent to bot
 voice_handler - this is called when audio message is sent to bot
 lang_handler - goes to state to change current language of text/speech to recognize 
-eng_text_handler - changes lang to eng
-rus_text_handler - changes lang to rus
+change_lang_to_eng_handler - changes lang to eng
+change_lang_to_rus_handler - changes lang to rus
 
 Internal states are self explainatory
 """
@@ -81,14 +81,14 @@ def lang_handler(bot, update, user_data):
     return "lang_choise_state"
 
 
-def eng_text_handler(bot, update, user_data):
+def change_lang_to_eng_handler(bot, update, user_data):
     """Changes lang to eng"""
     update.message.reply_text("Changed lang to eng", reply_markup=ReplyKeyboardRemove())
     change_current_lang("en-US")
     return "default_state"
 
 
-def rus_text_handler(bot, update, user_data):
+def change_lang_to_rus_handler(bot, update, user_data):
     """Changes lang to rus"""
     update.message.reply_text("Changed lang to rus", reply_markup=ReplyKeyboardRemove())
     change_current_lang("ru-RU")
@@ -115,8 +115,8 @@ conversation = ConversationHandler(
             CommandHandler("help", help_handler),
         ],
         "lang_choise_state": [
-            RegexHandler("^(Eng)$", eng_text_handler, pass_user_data=True),
-            RegexHandler("^(Rus)$", rus_text_handler, pass_user_data=True),
+            RegexHandler("^(Eng)$", change_lang_to_eng_handler, pass_user_data=True),
+            RegexHandler("^(Rus)$", change_lang_to_rus_handler, pass_user_data=True),
         ],
     },
     fallbacks=[],
