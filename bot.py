@@ -6,12 +6,12 @@ from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, Regex
 from telegram.error import (TelegramError, Unauthorized, BadRequest, 
                             TimedOut, ChatMigrated, NetworkError)
 
-from handlers import start_handler, text_handler, voice_handler, conversation, error_handler
+from handlers import start_handler, text_handler, voice_handler, conversation
 from settings import PROXY
 
 logging.basicConfig(
-    format="%(name)s - %(levelname)s - %(message)s",
-    level=logging.INFO
+    format="%(asctime)s %(name)s - %(levelname)s - %(message)s",
+    level=logging.INFO,
     filename='bot.log'
 )
 
@@ -20,7 +20,7 @@ logger.info("Telegram_tts_bot")
 
 sentry_sdk.init("https://aaa48c902161413c80612b49c2b7897b@sentry.io/1423053")
 
-def error_callback(bot, update, error):
+def error_handler(bot, update, error):
     try:
         raise error
     except Unauthorized:

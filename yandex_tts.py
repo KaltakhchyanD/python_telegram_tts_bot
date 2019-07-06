@@ -9,6 +9,7 @@ change_current_lang() - changes current of text/speech recognition
 
 import argparse
 import json
+import logging
 import os
 import requests
 import subprocess
@@ -19,6 +20,8 @@ import check_wav_length
 
 CURRENT_LANG = "en-US"
 # ru-RU
+
+#logger = logging.getLogger()
 
 
 def update_iam_token():
@@ -37,8 +40,14 @@ def update_iam_token():
     data = {"yandexPassportOauthToken": OauthToken}
     headers = {"Content-Type": "application/json"}
 
-    resp = requests.post(url, headers=headers, data=json.dumps(data))
+    #try:
+    #    resp = requests.post(url, headers=headers, data=json.dumps(data))
+    #    resp.raise_for_status()
+    #except requests.exceptions.RequestException as e:
+    #    logger.exception(f"Requests exception occure with status {resp.status_code} - {resp.text}")
+    #    raise
 
+    resp = requests.post(url, headers=headers, data=json.dumps(data))
     if resp.status_code != 200:
         raise RuntimeError(
             "Invalid response received: code: %d, message: %s"

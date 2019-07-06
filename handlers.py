@@ -16,6 +16,7 @@ change_lang_to_rus_handler - changes lang to rus
 
 Internal states are self explainatory
 """
+import logging
 import re
 
 from telegram import ReplyKeyboardMarkup, ReplyKeyboardRemove
@@ -32,6 +33,8 @@ from yandex_tts import (
     generate_text_from_speech,
     change_current_lang,
 )
+
+logger = logging.getLogger()
 
 
 def send_audio(bot, update, user_data, audio_file):
@@ -51,8 +54,20 @@ def text_handler(bot, update, user_data):
     """Get text from message, generate audio and send it to user."""
     user_text = update.message.text
     update.message.reply_text("Got your text!\nNow i will generate an audio file!")
-    audio_file = generate_audio_file_from_text(user_text)
-    send_audio(bot, update, user_data, audio_file)
+    try:
+        audio_file = generate_audio_file_from_text(user_text)
+    except RuntimeError:
+        update.message.reply_text(
+            "Something went wrong while trying to get result audio from Yandex.\n"
+            + "Try changing language with /lang\n"
+            + "Or try /start again"
+        )
+        logger.exception(
+            "Something went wrong while trying to get result audio from Yandex"
+        )
+        raise
+    else:
+        send_audio(bot, update, user_data, audio_file)
 
 
 def voice_handler(bot, update, user_data):
@@ -68,8 +83,25 @@ def voice_handler(bot, update, user_data):
         f"Got your voice! Its duration - {duration} sec, MIME type - {voice.mime_type}\n"
         + "Now i will generate text from it!"
     )
-    text = generate_text_from_speech("audio_from_telegram.ogg")
-    update.message.reply_text(text)
+
+    try:
+        text = generate_text_from_speech("audio_from_telegram.ogg")
+    except RuntimeError:
+        update.message.reply_text(
+            "Something went wrong while trying to get result text from Yandex.\n"
+            + "Try changing language with /lang\n"
+            + "Or try /start again"
+        )
+        logger.exception(
+            "Something went wrong while trying to get result text from Yandex"
+        )
+        raise
+    else:
+        update.message.reply_text(text)
+    # try:
+    #    update.message.reply_text(text)
+    # except TypeError:
+    #    logger.exception(f"Wrong type to send to chat ({type(text)}) - text to send should be STRING ")
 
 
 def lang_handler(bot, update, user_data):
