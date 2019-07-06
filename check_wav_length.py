@@ -5,12 +5,14 @@ It contains these functions to export:
 split_into_files_less_than_1k() - takes source wav file, returns list of smaller wav files of size <1K.
 """
 
-
+import logging
 import os
 import wave
 import subprocess
 
 from pydub import AudioSegment
+
+# logger = logging.getLogger()
 
 
 def get_audio_file_duration(filename):
@@ -18,10 +20,14 @@ def get_audio_file_duration(filename):
     # this is hack i think, should revisit later
     duration = 0
     if os.path.getsize(filename):
+        # try:
         with wave.open(filename) as wav_f:
             frames = wav_f.getnframes()
             rate = wav_f.getframerate()
             duration = frames / float(rate)
+        # except wave.Error as e:
+        #    logger.exception(f"Wave - error during reading {filename} ")
+        # raise
     return duration
 
 
@@ -67,8 +73,8 @@ def split_wav_by_silence(source_wav):
             "restart",
         ]
     )
-    not_empty_wav_files = find_not_empty_files("new_small_file")
-    return not_empty_wav_files
+    non_empty_small_wav_files = find_not_empty_files("new_small_file")
+    return non_empty_small_wav_files
 
 
 def find_not_empty_files(name_pattern):
@@ -81,37 +87,42 @@ def find_not_empty_files(name_pattern):
     """
 
     files_and_dirs_in_cwd = os.listdir(path=os.getcwd())
-    not_empty_wav_files = [
+    non_empty_small_wav_files = [
         i
         for i in sorted(files_and_dirs_in_cwd)
         if ".wav" in i and get_audio_file_duration(i) >= 0.5 and name_pattern in i
     ]
 
-    print(f"NOT EMPTY FILES {not_empty_wav_files}")
-    return not_empty_wav_files
+    # print(f"NOT EMPTY FILES {non_empty_small_wav_files}")
+    return non_empty_small_wav_files
 
 
-def create_new_file_name(list_of_names):
+def create_new_file_name(result_audio_files):
     """
     Create and append new filename to list of names by adding _1 to the last filename.
     Return new filename
     """
 
-    last_name = list_of_names[-1]
-    new_name = last_name.split(".")[0] + "_1" + ".wav"
+    last_name = result_audio_files[-1]
+    name_without_extention = last_name.split(".")[0]
+    new_index = int(name_without_extention.split('_')[-1])+1
+    new_name = '_'.join(name_without_extention.split('_')[:-1])+str(new_index)
+
     with open(new_name, "w") as f:
         pass
-    list_of_names.append(new_name)
+    result_audio_files.append(new_name)
     return new_name
 
 
 def delete_old_files():
     """Delete wav files that was created by split by silence and temp files. ???"""
     files_and_dirs_in_cwd = os.listdir(path=os.getcwd())
-    not_empty_wav_files = [i for i in sorted(files_and_dirs_in_cwd) if ".wav" in i]
+    non_empty_small_wav_files = [
+        i for i in sorted(files_and_dirs_in_cwd) if ".wav" in i
+    ]
     print("Cleaning up")
-    print(f"{len(not_empty_wav_files)} files to delete")
-    for filename in not_empty_wav_files:
+    print(f"{len(non_empty_small_wav_files)} files to delete")
+    for filename in non_empty_small_wav_files:
         if "new_small_file" in filename or "generated_audio_file" in filename:
             # print(f"Deleting file {filename}")
             os.remove(filename)
@@ -122,49 +133,51 @@ def split_into_files_less_than_1k(source_wav):
     Split source wav file into files of size <1K.
 
     Clean up dir - delete old files
-    Split input wav file at silence
+    Split input wav file by silence
     Add up small files into files of size <1K
-    Return list of filenames(that are <1K)
+    Return list of result filenames(that are <1K)
     """
     # 1
     delete_old_files()
+
     # 2/3
     if get_size_in_kb(source_wav) < 1024:
-        list_of_names = [source_wav]
+        result_audio_files = [source_wav]
     else:
         print("Splitting to small files")
-        not_empty_wav_files = split_wav_by_silence(source_wav)
-        list_of_names = ["generated_audio_file.wav"]
-        with open(list_of_names[0], "wb") as dst_wav_file:
+        non_empty_small_wav_files = split_wav_by_silence(source_wav)
+
+        # create first empty file to append audio content to
+        result_audio_files = ["generated_audio_file_0.wav"]
+        with open(result_audio_files[0], "wb") as _:
             pass
-        print(f"Start size {get_size_in_kb(list_of_names[-1])}")
 
         # 4
-        for next_small_file in not_empty_wav_files:
-            small_file_size = os.path.getsize(next_small_file) / 1024
+        # itterate over small files
+        # add small file to last result audio file while its size
+        # is less than 1KB
+        # then create new result audio file
+        # and add small file to it
+        for next_small_file in non_empty_small_wav_files:
+            current_result_audio_file = result_audio_files[-1]
 
-            print(f"File - {next_small_file}, size - {small_file_size} kb")
-            current_big_file = list_of_names[-1]
-            current_size = get_size_in_kb(current_big_file)
+            small_file_size = get_size_in_kb(next_small_file)
+            last_big_file_size = get_size_in_kb(current_result_audio_file)
 
-            if current_size + small_file_size < 1024:
-                pass
-            else:
-                print("     ------- LONG FILE")
-                current_big_file = create_new_file_name(list_of_names)
+            if 1024 < last_big_file_size + small_file_size:
+                current_result_audio_file = create_new_file_name(result_audio_files)
 
-            with open(current_big_file, "rb") as src_file_wav:
+            with open(current_result_audio_file, "rb") as src_file_wav:
                 src_data = src_file_wav.read()
             with open(next_small_file, "rb") as file_wav:
                 file_data = file_wav.read()
-            with wave.open(current_big_file, "wb") as dst_wav_file:
+
+            with wave.open(current_result_audio_file, "wb") as dst_wav_file:
                 dst_wav_file.setparams((1, 2, 48000, 0, "NONE", "NONE"))
                 dst_wav_file.writeframes(src_data + file_data)
 
-            print(f"New size {get_size_in_kb(current_big_file)}")
-
-        print(list_of_names)
-    return list_of_names
+        print(result_audio_files)
+    return result_audio_files
 
 
 if __name__ == "__main__":
