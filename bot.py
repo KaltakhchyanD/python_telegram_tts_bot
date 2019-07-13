@@ -1,3 +1,10 @@
+'''
+bot.py
+=====================
+Main module of this bot
+'''
+
+
 import logging
 import os
 
@@ -44,6 +51,9 @@ def error_handler(bot, update, error):
 
 
 def main():
+    '''
+    This is a main function of bot.py module
+    '''
     tts_bot = Updater(os.getenv("API_KEY_BOT"), request_kwargs=PROXY)
     dp = tts_bot.dispatcher
     dp.add_handler(conversation)

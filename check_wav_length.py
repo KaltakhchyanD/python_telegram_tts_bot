@@ -1,4 +1,6 @@
 """
+check_wav_length.py
+===================
 This module provides ability to split wav audio file into several files of size <1K.
 
 It contains these functions to export:

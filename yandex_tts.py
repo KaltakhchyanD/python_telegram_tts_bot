@@ -1,4 +1,6 @@
 """
+yandex_tts.py
+=============
 This module contains provides ability to perform TTS and STT with Yandex TTS and STT services.
 
 It contains these functions:
@@ -27,7 +29,7 @@ CURRENT_LANG = "en-US"
 def update_iam_token():
     """
     Update IAM token and update env var of it.
-
+    __________________________________________
     Get OauthToken from env var
     Get IAM token with requests
     Update IAM token env var
@@ -98,7 +100,7 @@ def synthesize_audio_content_from_text(folder_id, iam_token, text):
 def generate_audio_file_from_text(text):
     """
     Generate wav audio file from input text.
-
+    ________________________________________
     Get params from env variables
     Get audio content from input text with synthesize_audio_content_from_text()
     Write it to wav file
