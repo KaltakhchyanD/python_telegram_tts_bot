@@ -1,12 +1,13 @@
 """
 yandex_tts.py
-=============
+-------------
 This module contains provides ability to perform TTS and STT with Yandex TTS and STT services.
 
 It contains these functions:
-generate_audio_file_from_text() - returns wav audio synthesized from input text
-generate_text_from_speech() - returns text generated from input ogg audio
-change_current_lang() - changes current of text/speech recognition
+
+* generate_audio_file_from_text() - returns wav audio synthesized from input text
+* generate_text_from_speech() - returns text generated from input ogg audio
+* change_current_lang() - changes current of text/speech recognition
 """
 
 import argparse

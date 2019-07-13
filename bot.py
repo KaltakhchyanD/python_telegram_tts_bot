@@ -1,6 +1,6 @@
 '''
 bot.py
-=====================
+------
 Main module of this bot
 '''
 

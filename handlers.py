@@ -1,4 +1,6 @@
 """
+handlers.py
+-----------
 This module contains handlers used by telegram bot dispatcher at bot.py module.
     
 They are:
@@ -7,12 +9,13 @@ States are required for handlers to work in appropriate context(for example to s
 text input to generate speech from it).
 
 There are internal handlers:
-start_handler - this is called when /start commend is sent to bot
-text_handler - this is called when text message is sent to bot
-voice_handler - this is called when audio message is sent to bot
-lang_handler - goes to state to change current language of text/speech to recognize 
-change_lang_to_eng_handler - changes lang to eng
-change_lang_to_rus_handler - changes lang to rus
+
+* start_handler - this is called when /start command is sent to bot
+* text_handler - this is called when text message is sent to bot
+* voice_handler - this is called when audio message is sent to bot
+* lang_handler - goes to state to change current language of text/speech to recognize 
+* change_lang_to_eng_handler - changes lang to eng
+* change_lang_to_rus_handler - changes lang to rus
 
 Internal states are self explainatory
 """
@@ -44,7 +47,9 @@ def send_audio(bot, update, user_data, audio_file):
 
 
 def start_handler(bot, update, user_data):
-    """Send welcome message to user."""
+    """
+    Send welcome message to user.
+    """
     text = "Hi! This is Text2Speach test bot"
     update.message.reply_text(text)
     return "default_state"
