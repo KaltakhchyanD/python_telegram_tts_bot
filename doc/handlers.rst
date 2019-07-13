@@ -1,3 +1,5 @@
+Handlers
+--------
 .. automodule:: handlers
    :members:
 

@@ -1,3 +1,6 @@
+Bot
+---
+
 .. automodule:: bot
    :members:
 
