@@ -13,7 +13,7 @@ from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, Regex
 from telegram.error import (TelegramError, Unauthorized, BadRequest, 
                             TimedOut, ChatMigrated, NetworkError)
 
-from handlers import start_handler, text_handler, voice_handler, conversation
+from handlers import conversation
 from settings import PROXY
 
 logging.basicConfig(
