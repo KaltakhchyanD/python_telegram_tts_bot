@@ -18,16 +18,13 @@ import requests
 import subprocess
 import wave
 
-import check_wav_length
+from check_wav_length import convert_from_ogg_to_wav, split_into_files_less_than_1k
 
 
 CURRENT_LANG = "en-US"
-# ru-RU
-
-#logger = logging.getLogger()
 
 
-def update_iam_token():
+def _update_iam_token():
     """
     Update IAM token and update env var of it.
     __________________________________________
@@ -43,10 +40,10 @@ def update_iam_token():
     data = {"yandexPassportOauthToken": OauthToken}
     headers = {"Content-Type": "application/json"}
 
-    #try:
+    # try:
     #    resp = requests.post(url, headers=headers, data=json.dumps(data))
     #    resp.raise_for_status()
-    #except requests.exceptions.RequestException as e:
+    # except requests.exceptions.RequestException as e:
     #    logger.exception(f"Requests exception occure with status {resp.status_code} - {resp.text}")
     #    raise
 
@@ -66,17 +63,17 @@ def change_current_lang(lang):
     CURRENT_LANG = lang
 
 
-def synthesize_audio_content_from_text(folder_id, iam_token, text):
+def _synthesize_audio_content_from_text(folder_id, iam_token, text):
     """
     Send text to Yandex TTS and return audio content from response.
 
-    Update IAM token with update_iam_token()
+    Update IAM token with _update_iam_token()
     Send POST request to Yandex TTS service
     Return synthersized audio content from response
     """
 
     url = "https://tts.api.cloud.yandex.net/speech/v1/tts:synthesize"
-    update_iam_token()
+    _update_iam_token()
     iam_token = os.getenv("IAM_TOKEN")
     headers = {"Authorization": "Bearer " + iam_token}
 
@@ -103,7 +100,7 @@ def generate_audio_file_from_text(text):
     Generate wav audio file from input text.
     ________________________________________
     Get params from env variables
-    Get audio content from input text with synthesize_audio_content_from_text()
+    Get audio content from input text with _synthesize_audio_content_from_text()
     Write it to wav file
     Return result wav file
     """
@@ -112,7 +109,7 @@ def generate_audio_file_from_text(text):
     token = os.getenv("IAM_TOKEN")
     output_wav_file = "tts_output.wav"
 
-    audio_content = synthesize_audio_content_from_text(folder_id, token, text)
+    audio_content = _synthesize_audio_content_from_text(folder_id, token, text)
 
     with wave.open(output_wav_file, "wb") as wav_file:
         wav_file.setparams((1, 2, 48000, 0, "NONE", "NONE"))
@@ -121,7 +118,7 @@ def generate_audio_file_from_text(text):
     return output_wav_file
 
 
-def set_right_params_to_wav(source_file="test_voice.wav"):
+def _set_right_params_to_wav(source_file="test_voice.wav"):
     """
     Set right parameters to input wav file.
 
@@ -142,7 +139,7 @@ def set_right_params_to_wav(source_file="test_voice.wav"):
     return dest_file
 
 
-def synthesize_text_from_audio_file(source_file):
+def _synthesize_text_from_audio_file(source_file):
     """
     Synthesize text from input wav audio file.
 
@@ -152,7 +149,7 @@ def synthesize_text_from_audio_file(source_file):
     Return generated text from response
     """
 
-    update_iam_token()
+    _update_iam_token()
     folder_id = os.getenv("FOLDER_ID")
     token = os.getenv("IAM_TOKEN")
 
@@ -181,27 +178,27 @@ def generate_text_from_speech(source_file):
     """
     Create list of texts generated from input ogg audio file with Yandex STT and return that list.
 
-    Convert input ogg audio file to wav with check_wav_length.convert_from_ogg_to_wav()
+    Convert input ogg audio file to wav with convert_from_ogg_to_wav()
     Create list of files smaller than 1K from converted wav file
     For every file in list:
-        Generate text from audio with synthesize_text_from_audio_file()
+        Generate text from audio with _synthesize_text_from_audio_file()
         Add it to result text
     Return result text
     """
 
     list_of_texts = []
     result_text = ""
-    wav_from_ogg = check_wav_length.convert_from_ogg_to_wav(source_file)
+    wav_from_ogg = convert_from_ogg_to_wav(source_file)
     print("OGG TO WAV - SUCCESS")
-    list_of_audio_files = check_wav_length.split_into_files_less_than_1k(wav_from_ogg)
+    list_of_audio_files = split_into_files_less_than_1k(wav_from_ogg)
     print("BIG TO SMALL - SUCCESS")
     for file in list_of_audio_files:
-        result_text += synthesize_text_from_audio_file(file)
+        result_text += _synthesize_text_from_audio_file(file)
     print("VOICE TO TEXT - SUCCESS")
     return result_text
 
 
-def test_from_ogg_to_wav(source_file):
+def _test_from_ogg_to_wav(source_file):
     """
     Compare sizes of result files converted from ogg to wav with opus and sox.
 
@@ -243,4 +240,4 @@ def test_from_ogg_to_wav(source_file):
 if __name__ == "__main__":
     # test_one = generate_text_from_speech("test_voice.ogg")
     # print(test_one)
-    test_from_ogg_to_wav("test_voice.ogg")
+    _test_from_ogg_to_wav("test_voice.ogg")
