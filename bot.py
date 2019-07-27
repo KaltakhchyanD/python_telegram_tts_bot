@@ -13,13 +13,13 @@ from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, Regex
 from telegram.error import (TelegramError, Unauthorized, BadRequest, 
                             TimedOut, ChatMigrated, NetworkError)
 
-from handlers import conversation
+from src.handlers import conversation
 from settings import PROXY
 
 logging.basicConfig(
     format="%(asctime)s %(name)s - %(levelname)s - %(message)s",
     level=logging.INFO,
-    filename='bot.log'
+    #filename='bot.log'
 )
 
 logger = logging.getLogger(__name__)

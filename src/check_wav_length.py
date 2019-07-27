@@ -18,6 +18,10 @@ from pydub import AudioSegment
 
 # logger = logging.getLogger()
 
+def _test_func(num):
+    return num+1
+
+
 
 def _get_audio_file_duration(filename):
     """Get duration by divising number of frames to framerate with wave."""
@@ -192,4 +196,5 @@ def split_into_files_less_than_1k(source_wav):
 
 
 if __name__ == "__main__":
-    split_into_files_less_than_1k(source_wav="text_from_speach.wav")
+    #split_into_files_less_than_1k(source_wav="text_from_speach.wav")
+    from tests.test_check_wav_length import TestSum
