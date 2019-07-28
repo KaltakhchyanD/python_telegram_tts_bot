@@ -18,10 +18,6 @@ from pydub import AudioSegment
 
 # logger = logging.getLogger()
 
-def _test_func(num):
-    return num+1
-
-
 
 def _get_audio_file_duration(filename):
     """Get duration by divising number of frames to framerate with wave."""
