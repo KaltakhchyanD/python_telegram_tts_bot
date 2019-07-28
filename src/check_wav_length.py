@@ -57,7 +57,7 @@ def convert_from_ogg_to_wav(ogg_audio_file):
     return wav_from_ogg
 
 
-def _find_non_empty_wav_files(name_pattern, path = os.getcwd()):
+def _find_non_empty_wav_files(name_pattern, path=os.getcwd()):
     """
     Return list of non-empty wav files in dir
 
@@ -117,10 +117,16 @@ def _create_and_return_new_file_name(result_audio_files):
     name_splitted_by_underscore = name_without_extension.split("_")
 
     if not name_splitted_by_underscore[-1].isdigit():
-        new_name = f"{name_without_extension}_1.{extension}" 
+        new_name = f"{name_without_extension}_1.{extension}"
     else:
         new_index = int(name_splitted_by_underscore[-1]) + 1
-        new_name = "_".join(name_splitted_by_underscore[:-1]) +"_"+ str(new_index) + "." +extension
+        new_name = (
+            "_".join(name_splitted_by_underscore[:-1])
+            + "_"
+            + str(new_index)
+            + "."
+            + extension
+        )
 
     with open(new_name, "w") as f:
         pass

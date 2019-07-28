@@ -199,7 +199,7 @@ class TestFindNonEmptyWavFiles(unittest.TestCase):
         with self.assertRaises(FileNotFoundError):
             result = _find_non_empty_wav_files("speech_test", path)
 
-    #def test_not_string_dir_path(self):
+    # def test_not_string_dir_path(self):
     #    """
     #    Test int instead of dir path
     #    """
