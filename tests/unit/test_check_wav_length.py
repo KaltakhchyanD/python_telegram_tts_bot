@@ -281,7 +281,7 @@ class TestCreateAndReturnNewFileName(unittest.TestCase):
         """
         self.first = os.getcwd()
         try:
-            os.mkdir("new_filename_test")
+            os.mkdir("tests/unit/test_files/new_filename_test")
         except FileExistsError:
             pass
         os.chdir("tests/unit/test_files/new_filename_test")
