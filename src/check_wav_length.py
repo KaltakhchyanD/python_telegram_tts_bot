@@ -139,13 +139,12 @@ def _delete_old_files(path=os.getcwd()):
     """Delete wav files that was created by split by silence and temp files. ???"""
     files_and_dirs_in_cwd = os.listdir(path=path)
     non_empty_small_wav_files = [
-        i for i in sorted(files_and_dirs_in_cwd) if ".wav" in i
+        i for i in sorted(files_and_dirs_in_cwd) if i.endswith(".wav")
     ]
-    print("Cleaning up")
+    print(f"Cleaning up at {path}")
     print(f"{len(non_empty_small_wav_files)} files to delete")
     for filename in non_empty_small_wav_files:
-        if "new_small_file" in filename or "generated_audio_file" in filename:
-            # print(f"Deleting file {filename}")
+        if filename.startswith("new_small_file") or filename.startswith("generated_audio_file"):
             os.remove(filename)
 
 
