@@ -57,31 +57,35 @@ def convert_from_ogg_to_wav(ogg_audio_file):
     return wav_from_ogg
 
 
-def _find_non_empty_files(name_pattern):
+def _find_non_empty_wav_files(name_pattern, path = os.getcwd()):
     """
     Return list of non-empty wav files in dir
 
-    Get files if current dir
-    Get all wav files with certain name with duration>0.5s ??? names of result of splitting by silence
-    Return list of not empty wav files
+    Get all wav files in path with duration>0.5s and whos name starts with name_pattern
+    Return list of these names
     """
 
-    files_and_dirs_in_cwd = os.listdir(path=os.getcwd())
+    files_and_dirs_in_dir = os.listdir(path=path)
     non_empty_small_wav_files = [
         i
-        for i in sorted(files_and_dirs_in_cwd)
-        if ".wav" in i and _get_audio_file_duration(i) >= 0.5 and name_pattern in i
+        for i in sorted(files_and_dirs_in_dir)
+        if i.endswith(".wav")
+        and _get_audio_file_duration(f"{path}/{i}") >= 0.5
+        and i.startswith(name_pattern)
     ]
-
-    # print(f"NOT EMPTY FILES {non_empty_small_wav_files}")
     return non_empty_small_wav_files
 
 
 def _split_wav_by_silence(source_wav):
     """
     Split wav audio on silence(silence is 0.1 sec of 2% of max volume(of sample?)).
-    Return list of non-empty small files
+    Return name pattern of created files(all of them start with this pattern)
     """
+    if not source_wav.endswith(".wav"):
+        raise ValueError(f"File should be of type .wav - got {source_wav}")
+    # Check file exist, if no - raise FileNotFoundError
+    with open(source_wav, "r") as file:
+        pass
 
     subprocess.call(
         [
