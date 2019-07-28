@@ -348,11 +348,76 @@ class TestCreateAndReturnNewFileName(unittest.TestCase):
 
     def test_not_correct_filename_list(self):
         """
-        Test fiilename without extension in filename list
+        Test filename without extension in filename list
         """
         filename_list = ["123"]
         with self.assertRaises(ValueError):
             result = _create_and_return_new_file_name(filename_list)
+
+
+class TestDeleteOldFiles(unittest.TestCase):
+    def create_file_in_cwd(self, filename):
+        """
+        Create file
+        """
+        with open(filename, "w"):
+            pass
+
+    def setUp(self):
+        """
+        Save initial cwd
+        """
+        self.first = os.getcwd()
+        try:
+            os.mkdir("tests/unit/test_files/delete_files_test")
+        except FileExistsError:
+            pass
+        finally:
+            os.chdir("tests/unit/test_files/delete_files_test")
+
+        try:
+            os.remove(".DS_Store")
+        except FileNotFoundError:
+            pass
+        # whould be deleted
+        self.create_file_in_cwd("new_small_file1.wav")
+        self.create_file_in_cwd("generated_audio_file123.wav")
+        # wont be deleted
+        self.create_file_in_cwd("not_new_small_file1.wav")
+        self.create_file_in_cwd("not_generated_audio_file.wav")
+        self.create_file_in_cwd("new_small_file1.txt")
+        self.create_file_in_cwd("generated_audio_file123.txt")
+
+    def tearDown(self):
+        """
+        Change to initial cwd
+        """
+        os.chdir(self.first)
+
+    def test_normal_case(self):
+        """
+        Test normal case
+        """
+        _delete_old_files(os.getcwd())
+        files_and_dirs_in_dir = os.listdir()
+        self.assertEqual(len(files_and_dirs_in_dir), 4)
+        self.assertTrue(
+            all(
+                name_to_delete not in files_and_dirs_in_dir
+                for name_to_delete in [
+                    "new_small_file1.wav",
+                    "generated_audio_file123.wav",
+                ]
+            )
+        )
+
+    def test_not_existing_dir(self):
+        """
+        Test not existing dir
+        """
+        path = "tests/unit/test_files/some_dir"
+        with self.assertRaises(FileNotFoundError):
+            _delete_old_files(path)
 
 
 if __name__ == "__main__":
