@@ -280,6 +280,10 @@ class TestCreateAndReturnNewFileName(unittest.TestCase):
         Save initial cwd
         """
         self.first = os.getcwd()
+        try:
+            os.mkdir("new_filename_test")
+        except FileExistsError:
+            pass
         os.chdir("tests/unit/test_files/new_filename_test")
         try:
             os.remove(".DS_Store")
