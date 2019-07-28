@@ -31,7 +31,7 @@ from telegram.ext import (
     Filters,
 )
 
-from yandex_tts import (
+from src.yandex_tts import (
     generate_audio_file_from_text,
     generate_text_from_speech,
     change_current_lang,

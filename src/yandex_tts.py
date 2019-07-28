@@ -18,7 +18,7 @@ import requests
 import subprocess
 import wave
 
-from check_wav_length import convert_from_ogg_to_wav, split_into_files_less_than_1k
+from src.check_wav_length import convert_from_ogg_to_wav, split_into_files_less_than_1k
 
 
 CURRENT_LANG = "en-US"
