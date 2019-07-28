@@ -103,30 +103,35 @@ def _split_wav_by_silence(source_wav):
             "restart",
         ]
     )
-    non_empty_small_wav_files = _find_non_empty_files("new_small_file")
-    return non_empty_small_wav_files
+    return "new_small_file"
 
 
 def _create_and_return_new_file_name(result_audio_files):
     """
-    Create and append new filename to list of names by adding _1 to the last filename.
+    Create and append new filename to list of names by adding 1 to the last filename.
     Return new filename
     """
 
     last_name = result_audio_files[-1]
-    name_without_extention = last_name.split(".")[0]
-    new_index = int(name_without_extention.split("_")[-1]) + 1
-    new_name = "_".join(name_without_extention.split("_")[:-1]) + str(new_index)
+    name_without_extension, extension = last_name.split(".")
+    name_splitted_by_underscore = name_without_extension.split("_")
+
+    if not name_splitted_by_underscore[-1].isdigit():
+        new_name = f"{name_without_extension}_1.{extension}" 
+    else:
+        new_index = int(name_splitted_by_underscore[-1]) + 1
+        new_name = "_".join(name_splitted_by_underscore[:-1]) +"_"+ str(new_index) + "." +extension
 
     with open(new_name, "w") as f:
         pass
+
     result_audio_files.append(new_name)
     return new_name
 
 
-def _delete_old_files():
+def _delete_old_files(path=os.getcwd()):
     """Delete wav files that was created by split by silence and temp files. ???"""
-    files_and_dirs_in_cwd = os.listdir(path=os.getcwd())
+    files_and_dirs_in_cwd = os.listdir(path=path)
     non_empty_small_wav_files = [
         i for i in sorted(files_and_dirs_in_cwd) if ".wav" in i
     ]
@@ -170,7 +175,8 @@ def split_into_files_less_than_1k(source_wav):
         result_audio_files = [source_wav]
     else:
         print("Splitting to small files")
-        non_empty_small_wav_files = _split_wav_by_silence(source_wav)
+        name_pattern = _split_wav_by_silence(source_wav)
+        non_empty_small_wav_files = _find_non_empty_wav_files(name_pattern)
 
         # create first empty file to append audio content to
         result_audio_files = ["generated_audio_file_0.wav"]
