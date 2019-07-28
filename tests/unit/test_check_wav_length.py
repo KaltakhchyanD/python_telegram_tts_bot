@@ -12,6 +12,7 @@ from src.check_wav_length import (
     _split_wav_by_silence,
     _create_and_return_new_file_name,
     _delete_old_files,
+    _add_first_audio_file_to_second,
 )
 
 
@@ -418,6 +419,139 @@ class TestDeleteOldFiles(unittest.TestCase):
         path = "tests/unit/test_files/some_dir"
         with self.assertRaises(FileNotFoundError):
             _delete_old_files(path)
+
+
+class TestAddFirstAudioFileToSecond(unittest.TestCase):
+    def create_file_in_cwd(self, filename):
+        """
+        Create file
+        """
+        with open(filename, "w"):
+            pass
+
+    def setUp(self):
+        """
+        Save initial cwd
+        """
+        self.first = os.getcwd()
+        try:
+            os.mkdir("tests/unit/test_files/add_test")
+        except FileExistsError:
+            pass
+        finally:
+            os.chdir("tests/unit/test_files/add_test")
+
+        try:
+            os.remove(".DS_Store")
+        except FileNotFoundError:
+            pass
+
+    def tearDown(self):
+        """
+        Change to initial cwd
+        """
+        os.chdir(self.first)
+
+    def test_empty_plus_not(self):
+        """
+        Test empty file plus not empty
+        """
+        self.create_file_in_cwd("empty.wav")
+        _add_first_audio_file_to_second("speech_test.wav", "empty.wav")
+        self.assertEqual(
+            int(_get_size_in_kb("empty.wav")), int(_get_size_in_kb("speech_test.wav"))
+        )
+        self.assertTrue(_get_size_in_kb("empty.wav") != 0)
+        os.remove("empty.wav")
+
+    def test_two_not_empty(self):
+        """
+        Test 2 not empty files
+        """
+        self.create_file_in_cwd("empty.wav")
+        _add_first_audio_file_to_second("speech_test.wav", "empty.wav")
+        _add_first_audio_file_to_second("not_that_name.wav", "empty.wav")
+        self.assertEqual(
+            int(_get_size_in_kb("empty.wav")),
+            int(_get_size_in_kb("speech_test.wav"))
+            + int(_get_size_in_kb("not_that_name.wav")),
+        )
+        os.remove("empty.wav")
+
+    def test_first_doesnt_exist(self):
+        """
+        Test first file doesnt exist
+        """
+        with self.assertRaises(FileNotFoundError):
+            _add_first_audio_file_to_second("speech_test.wav", "empty.wav")
+
+    def test_second_doesnt_exist(self):
+        """
+        Test second file doesnt exist
+        """
+        with self.assertRaises(FileNotFoundError):
+            _add_first_audio_file_to_second("empty.wav", "speech_test.wav")
+
+    def test_both_doesnt_exist(self):
+        """
+        Test both files dont exist
+        """
+        with self.assertRaises(FileNotFoundError):
+            _add_first_audio_file_to_second("empty.wav", "empty2.wav")
+
+        # def test_first_not_a_str(self):
+        #    """
+        #    Test first file name is not a string
+        #    """
+        #    with self.assertRaises(FileNotFoundError):
+        #        _add_first_audio_file_to_second(123, "speech_test.wav" )
+        #
+        # def test_second_not_a_str(self):
+        #    """
+        #    Test second file name is not a string
+        #    """
+        #    pass
+        #
+        # def test_both_not_a_str(self):
+        #    """
+        #    Test both files names is not a string
+        #    """
+        pass
+
+    def test_missing_one_filename(self):
+        """
+        Test missing one filename
+        """
+        with self.assertRaises(TypeError):
+            _add_first_audio_file_to_second("empty2.wav")
+
+    def test_missing_both_filename(self):
+        """
+        Test missing both filenames
+        """
+        with self.assertRaises(TypeError):
+            _add_first_audio_file_to_second()
+
+    def test_first_name_empty(self):
+        """
+        Test first filename empty
+        """
+        with self.assertRaises(FileNotFoundError):
+            _add_first_audio_file_to_second("", "empty.wav")
+
+    def test_second_name_empty(self):
+        """
+        Test second filename empty
+        """
+        with self.assertRaises(FileNotFoundError):
+            _add_first_audio_file_to_second("empty.wav", "")
+
+    def test_both_names_empty(self):
+        """
+        Test both filenames empty
+        """
+        with self.assertRaises(FileNotFoundError):
+            _add_first_audio_file_to_second("", "")
 
 
 if __name__ == "__main__":
