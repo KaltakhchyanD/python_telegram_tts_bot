@@ -46,6 +46,8 @@ def convert_from_ogg_to_wav(ogg_audio_file):
     # subprocess.call(
     #    ["opusdec", "--rate", "48000", "--force-wav", ogg_audio_file, wav_from_ogg]
     # )
+    if not ogg_audio_file.endswith(".ogg"):
+        raise ValueError(f"File should be of type .ogg - got {ogg_audio_file}")
 
     from_ogg_pydub = AudioSegment.from_ogg(ogg_audio_file)
     from_ogg_pydub.export(wav_from_ogg, bitrate="48k", format="wav")
@@ -192,5 +194,4 @@ def split_into_files_less_than_1k(source_wav):
 
 
 if __name__ == "__main__":
-    #split_into_files_less_than_1k(source_wav="text_from_speach.wav")
-    from tests.test_check_wav_length import TestSum
+    split_into_files_less_than_1k(source_wav="text_from_speach.wav")
