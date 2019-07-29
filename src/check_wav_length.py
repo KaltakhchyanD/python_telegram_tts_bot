@@ -6,7 +6,7 @@ This module provides ability to split wav audio file into several files of size 
 It contains these functions to export:
 
 * convert_from_ogg_to_wav() - creates new wav file from input ogg, returns it
-* split_into_files_less_than_1k() - takes source wav file, returns list of smaller wav files of size <1K.
+* split_into_files_less_than_1m() - takes source wav file, returns list of smaller wav files of size <1K.
 """
 
 import logging
@@ -163,17 +163,17 @@ def _add_first_audio_file_to_second(first_file, second_file):
         dst_wav_file.writeframes(second_file_data + first_file_data)
 
 
-def split_into_files_less_than_1k(source_wav):
+def split_into_files_less_than_1m(source_wav):
     """
-    Split source wav file into files of size <1K.
+    Split source wav file into files of size <1M.
 
     Clean up dir - delete old files
     Split input wav file by silence
-    Add up small files into files of size <1K
-    Return list of result filenames(that are <1K)
+    Add up small files into files of size <1M
+    Return list of result filenames(that are <1M)
     """
     # 1
-    _delete_old_files()
+    _delete_old_files(os.getcwd())
 
     # 2/3
     if _get_size_in_kb(source_wav) < 1024:
@@ -209,4 +209,4 @@ def split_into_files_less_than_1k(source_wav):
 
 
 if __name__ == "__main__":
-    split_into_files_less_than_1k(source_wav="text_from_speach.wav")
+    split_into_files_less_than_1m(source_wav="text_from_speach.wav")
