@@ -13,6 +13,7 @@ from src.check_wav_length import (
     _create_and_return_new_file_name,
     _delete_old_files,
     _add_first_audio_file_to_second,
+    split_into_files_less_than_1m,
 )
 
 
@@ -552,6 +553,58 @@ class TestAddFirstAudioFileToSecond(unittest.TestCase):
         """
         with self.assertRaises(FileNotFoundError):
             _add_first_audio_file_to_second("", "")
+
+
+class TestSplitIntoFilesLessThan1K(unittest.TestCase):
+    def setUp(self):
+        """
+        Save initial cwd
+        """
+        self.first = os.getcwd()
+        try:
+            os.mkdir("tests/unit/test_files/split_1m_test")
+        except FileExistsError:
+            pass
+        finally:
+            os.chdir("tests/unit/test_files/split_1m_test")
+
+        try:
+            os.remove(".DS_Store")
+        except FileNotFoundError:
+            pass
+
+    def tearDown(self):
+        """
+        Change to initial cwd
+        """
+        os.chdir(self.first)
+
+    def test_short_file_normal_case(self):
+        """
+        Test short file normal case
+        """
+        result = split_into_files_less_than_1m("short.wav")
+        self.assertEqual(len(result), 1)
+        files_and_dirs_in_dir = os.listdir(path=os.getcwd())
+        self.assertEqual(len(files_and_dirs_in_dir), 2)
+        for result_file in result:
+            self.assertTrue(_get_size_in_kb(result_file) <= 1024)
+            # self.assertTrue(result_file.startswith("generated_audio_file_"))
+            self.assertTrue(result_file.startswith("short"))
+            self.assertTrue(result_file.endswith(".wav"))
+
+    def test_long_file_normal_case(self):
+        """
+        Test long file normal case
+        """
+        result = split_into_files_less_than_1m("long.wav")
+        self.assertEqual(len(result), 1)
+        files_and_dirs_in_dir = os.listdir(path=os.getcwd())
+        self.assertEqual(len(files_and_dirs_in_dir), 82)
+        for result_file in result:
+            self.assertTrue(_get_size_in_kb(result_file) <= 1024)
+            self.assertTrue(result_file.startswith("generated_audio_file_"))
+            self.assertTrue(result_file.endswith(".wav"))
 
 
 if __name__ == "__main__":
