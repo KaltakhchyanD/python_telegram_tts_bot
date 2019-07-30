@@ -606,6 +606,57 @@ class TestSplitIntoFilesLessThan1K(unittest.TestCase):
             self.assertTrue(result_file.startswith("generated_audio_file_"))
             self.assertTrue(result_file.endswith(".wav"))
 
+    def test_file_doesnt_exist_case(self):
+        """
+        Test file doesnt exist
+        """
+        with self.assertRaises(FileNotFoundError):
+            result = split_into_files_less_than_1m("no.wav")
+
+        files_and_dirs_in_dir = os.listdir(path=os.getcwd())
+        self.assertEqual(len(files_and_dirs_in_dir), 2)
+
+    def test_empty_file_case(self):
+        """
+        Test file doesnt exist
+        """
+        with open("empty.wav", "w"):
+            pass
+        result = split_into_files_less_than_1m("empty.wav")
+        self.assertEqual(len(result), 1)
+        files_and_dirs_in_dir = os.listdir(path=os.getcwd())
+        self.assertEqual(len(files_and_dirs_in_dir), 3)
+        for result_file in result:
+            self.assertTrue(_get_size_in_kb(result_file) <= 1024)
+            # self.assertTrue(result_file.startswith("generated_audio_file_"))
+            self.assertTrue(result_file.startswith("empty"))
+            self.assertTrue(result_file.endswith(".wav"))
+        os.remove("empty.wav")
+
+    def test_not_audio_file(self):
+        """
+        Test not audio file
+        """
+        with open("empty.txt", "w"):
+            pass
+        with self.assertRaises(ValueError):
+            result = split_into_files_less_than_1m("empty.txt")
+        os.remove("empty.txt")
+
+    def test_not_string_filename(self):
+        """
+        Test not string file name
+        """
+        with self.assertRaises(AttributeError):
+            result = split_into_files_less_than_1m(123)
+
+    def test_no_filename(self):
+        """
+        Test not passing filename to func
+        """
+        with self.assertRaises(TypeError):
+            result = split_into_files_less_than_1m()
+
 
 if __name__ == "__main__":
     unittest.main()
