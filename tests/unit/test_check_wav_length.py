@@ -504,24 +504,26 @@ class TestAddFirstAudioFileToSecond(unittest.TestCase):
         with self.assertRaises(FileNotFoundError):
             _add_first_audio_file_to_second("empty.wav", "empty2.wav")
 
-        # def test_first_not_a_str(self):
-        #    """
-        #    Test first file name is not a string
-        #    """
-        #    with self.assertRaises(FileNotFoundError):
-        #        _add_first_audio_file_to_second(123, "speech_test.wav" )
-        #
-        # def test_second_not_a_str(self):
-        #    """
-        #    Test second file name is not a string
-        #    """
-        #    pass
-        #
-        # def test_both_not_a_str(self):
-        #    """
-        #    Test both files names is not a string
-        #    """
-        pass
+    def test_first_not_a_str(self):
+        """
+        Test first file name is not a string
+        """
+        with self.assertRaises(OSError):
+            _add_first_audio_file_to_second(123, "speech_test.wav")
+
+    def test_second_not_a_str(self):
+        """
+        Test second file name is not a string
+        """
+        with self.assertRaises(OSError):
+            _add_first_audio_file_to_second("speech_test.wav", 123)
+
+    def test_both_not_a_str(self):
+        """
+        Test both files names is not a string
+        """
+        with self.assertRaises(OSError):
+            _add_first_audio_file_to_second(123, 123)
 
     def test_missing_one_filename(self):
         """
