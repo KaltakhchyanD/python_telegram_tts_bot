@@ -176,7 +176,8 @@ def split_into_files_less_than_1m(source_wav):
     """
     # 1
     _delete_old_files(os.getcwd())
-
+    if not source_wav.endswith(".wav"):
+        raise ValueError(f"File should be of type .wav - got {source_wav}")
     # 2/3
     if _get_size_in_kb(source_wav) < 1024:
         result_audio_files = [source_wav]
