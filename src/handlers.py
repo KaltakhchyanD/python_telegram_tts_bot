@@ -40,7 +40,7 @@ from src.yandex_tts import (
 logger = logging.getLogger()
 
 
-def send_audio(bot, update, user_data, audio_file):
+def _send_audio(bot, update, user_data, audio_file):
     """ Send audio file to user."""
     with open(audio_file, "rb") as f:
         bot.send_audio(chat_id=update.message.chat_id, audio=f)
@@ -72,7 +72,7 @@ def text_handler(bot, update, user_data):
         )
         raise
     else:
-        send_audio(bot, update, user_data, audio_file)
+        _send_audio(bot, update, user_data, audio_file)
 
 
 def voice_handler(bot, update, user_data):
