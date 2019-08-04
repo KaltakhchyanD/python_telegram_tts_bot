@@ -42,9 +42,6 @@ def error_handler(bot, update, error):
     except NetworkError:
         logger.exception("There was an NetworkError exception ")
         # handle other connection problems
-    except ChatMigrated as e:
-        logger.exception("There was an ChatMigrated exception ")
-        # the chat_id of a group has changed, use e.new_chat_id instead
     except TelegramError:
         logger.exception("There was some generic TelegramError exception ")
         # handle all other telegram related errors
