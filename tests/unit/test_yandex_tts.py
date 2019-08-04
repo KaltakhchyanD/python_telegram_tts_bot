@@ -14,6 +14,8 @@ from src.yandex_tts import (
     generate_text_from_speech,
 )
 
+from src.check_wav_length import _delete_old_files
+
 
 class TestUpdateIamToken(unittest.TestCase):
     def test_normal_case(self):
@@ -263,6 +265,7 @@ class TestGenerateTextFromSpeech(unittest.TestCase):
         change_current_lang_and_return("ru-RU")
 
     def tearDown(self):
+        _delete_old_files()
         change_current_lang_and_return("en-US")
 
     def test_normal_case(self):
