@@ -7,7 +7,7 @@ It contains these functions:
 
 * generate_audio_file_from_text() - returns wav audio synthesized from input text
 * generate_text_from_speech() - returns text generated from input ogg audio
-* change_current_lang() - changes current of text/speech recognition
+* change_current_lang_and_return() - changes current of text/speech recognition
 """
 
 import argparse
@@ -57,10 +57,11 @@ def _update_iam_token():
     os.environ["IAM_TOKEN"] = new_iam_token
 
 
-def change_current_lang(lang):
-    """Change current language of text/speech recognition"""
+def change_current_lang_and_return(lang):
+    """Change current language of text/speech recognition and return it"""
     global CURRENT_LANG
     CURRENT_LANG = lang
+    return CURRENT_LANG
 
 
 def _synthesize_audio_content_from_text(folder_id, iam_token, text):

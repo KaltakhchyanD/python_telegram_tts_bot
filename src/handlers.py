@@ -34,7 +34,7 @@ from telegram.ext import (
 from src.yandex_tts import (
     generate_audio_file_from_text,
     generate_text_from_speech,
-    change_current_lang,
+    change_current_lang_and_return,
 )
 
 logger = logging.getLogger()
@@ -121,14 +121,14 @@ def lang_handler(bot, update, user_data):
 def change_lang_to_eng_handler(bot, update, user_data):
     """Changes lang to eng"""
     update.message.reply_text("Changed lang to eng", reply_markup=ReplyKeyboardRemove())
-    change_current_lang("en-US")
+    change_current_lang_and_return("en-US")
     return "default_state"
 
 
 def change_lang_to_rus_handler(bot, update, user_data):
     """Changes lang to rus"""
     update.message.reply_text("Changed lang to rus", reply_markup=ReplyKeyboardRemove())
-    change_current_lang("ru-RU")
+    change_current_lang_and_return("ru-RU")
     return "default_state"
 
 
