@@ -141,8 +141,6 @@ def _delete_old_files(path=os.getcwd()):
     non_empty_small_wav_files = [
         i for i in sorted(files_and_dirs_in_cwd) if i.endswith(".wav")
     ]
-    print(f"Cleaning up at {path}")
-    print(f"{len(non_empty_small_wav_files)} files to delete")
     for filename in non_empty_small_wav_files:
         if filename.startswith("new_small_file") or filename.startswith(
             "generated_audio_file"
