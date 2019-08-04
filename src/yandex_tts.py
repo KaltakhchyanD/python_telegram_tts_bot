@@ -74,7 +74,6 @@ def _synthesize_audio_content_from_text(folder_id, iam_token, text):
     """
 
     url = "https://tts.api.cloud.yandex.net/speech/v1/tts:synthesize"
-    _update_iam_token()
     iam_token = os.getenv("IAM_TOKEN")
     headers = {"Authorization": "Bearer " + iam_token}
 
@@ -105,6 +104,7 @@ def generate_audio_file_from_text(text):
     Write it to wav file
     Return result wav file
     """
+    _update_iam_token()
 
     folder_id = os.getenv("FOLDER_ID")
     token = os.getenv("IAM_TOKEN")
@@ -140,25 +140,19 @@ def _set_right_params_to_wav(source_file="test_voice.wav"):
     return dest_file
 
 
-def _synthesize_text_from_audio_file(source_file):
+def _synthesize_text_from_audio_file(folder_id, iam_token, source_file):
     """
     Synthesize text from input wav audio file.
 
-    Update IAM token
-    Get params from env variables
     Send POST request to Yandex STT service
     Return generated text from response
     """
-
-    _update_iam_token()
-    folder_id = os.getenv("FOLDER_ID")
-    token = os.getenv("IAM_TOKEN")
 
     with open(source_file, "rb") as f:
         data = f.read()
 
     url = "https://stt.api.cloud.yandex.net/speech/v1/stt:recognize"
-    headers = {"Authorization": "Bearer " + token}
+    headers = {"Authorization": "Bearer " + iam_token}
     params = {
         "format": "lpcm",
         "sampleRateHertz": 48000,
@@ -179,6 +173,8 @@ def generate_text_from_speech(source_file):
     """
     Create list of texts generated from input ogg audio file with Yandex STT and return that list.
 
+    Update IAM token
+    Get params from env variables
     Convert input ogg audio file to wav with convert_from_ogg_to_wav()
     Create list of files smaller than 1K from converted wav file
     For every file in list:
@@ -187,6 +183,10 @@ def generate_text_from_speech(source_file):
     Return result text
     """
 
+    _update_iam_token()
+    folder_id = os.getenv("FOLDER_ID")
+    token = os.getenv("IAM_TOKEN")
+
     list_of_texts = []
     result_text = ""
     wav_from_ogg = convert_from_ogg_to_wav(source_file)
@@ -194,7 +194,7 @@ def generate_text_from_speech(source_file):
     list_of_audio_files = split_into_files_less_than_1m(wav_from_ogg)
     print("BIG TO SMALL - SUCCESS")
     for file in list_of_audio_files:
-        result_text += _synthesize_text_from_audio_file(file)
+        result_text += _synthesize_text_from_audio_file(folder_id, token, file)
     print("VOICE TO TEXT - SUCCESS")
     return result_text
 
