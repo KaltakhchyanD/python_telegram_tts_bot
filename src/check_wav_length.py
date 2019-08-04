@@ -180,7 +180,7 @@ def split_into_files_less_than_1m(source_wav):
     if _get_size_in_kb(source_wav) < 1024:
         result_audio_files = [source_wav]
     else:
-        print("Splitting to small files")
+        #print("Splitting to small files")
         name_pattern = _split_wav_by_silence(source_wav)
         non_empty_small_wav_files = _find_non_empty_wav_files(name_pattern)
 
@@ -205,7 +205,7 @@ def split_into_files_less_than_1m(source_wav):
                     result_audio_files
                 )
             _add_first_audio_file_to_second(next_small_file, current_result_audio_file)
-        print(result_audio_files)
+        #print(result_audio_files)
     return result_audio_files
 
 
