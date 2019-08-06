@@ -15,16 +15,23 @@ Take into consideration that its my pet project.
 
 ## Installation
 B4:
+
 BotFather
+
 Yandex
 
 OS X & Linux:
 
 git clone 
+
 python3 -m venv env
+
 ./env/bin/activate
+
 pip install -r requirements.txt
+
 ENV VARS!
+
 python bot.py
 
 
