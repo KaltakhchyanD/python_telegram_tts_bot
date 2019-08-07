@@ -10,15 +10,24 @@ With this bot written on python3 with python-telegram-bot (<https://github.com/p
 Take into consideration that it's my pet project.
 
 
+## Before installation
+You have to register your bot at BotFather and create Yandex Cloud account. More on that down below
+Also you need to obtain 4 tokens:
+ - telegram bot api token (<https://core.telegram.org/bots#6-botfather>)
+ - IAM token (<https://cloud.yandex.com/docs/speechkit/concepts/auth>)
+ - Folder_ID - id your folder at Yandex Cloud. More on Yandex Cloud (<https://cloud.yandex.com>)
+ - Get an OAuth token from Yandex.OAuth. To do this, follow the link (<https://oauth.yandex.com/authorize?response_type=token&client_id=1a6990aa636648e9b2ef855fa7bec2fb>), click Allow and copy the OAuth token that is issued.
 
+This bot uses this tokens as env variables - you should export them locally by yourself with these exact names:
 
+```sh
+ export API_KEY_BOT=...
+ export IAM_TOKEN=...
+ export FOLDER_ID=...
+ export OauthToken=...
+```
 
 ## Installation
-B4:
-
-BotFather
-
-Yandex
 
 OS X & Linux:
 
