@@ -27,6 +27,8 @@ This bot uses this tokens as env variables - you should export them locally by y
  export OauthToken=...
 ```
 
+As you may see IAM token works only for 12 hours. This bot will update it automatically so you don't have to worry about it.
+
 ## Installation
 
 OS X & Linux:
