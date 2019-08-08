@@ -11,6 +11,7 @@ Take into consideration that it's my pet project.
 
 
 ## Before installation
+Bot requires python 3.6+
 You have to register your bot at BotFather and create Yandex Cloud account. More on that down below
 Also you need to obtain 4 tokens:
  - telegram bot api token (<https://core.telegram.org/bots#6-botfather>)
@@ -31,22 +32,36 @@ As you may see IAM token works only for 12 hours. This bot will update it automa
 
 ## Installation
 
-OS X & Linux:
+#### OS X & Linux:
 
-git clone 
+Clone this repo
+```sh
+ git clone 
+```
+Install sox and ffmpeg. Sox is used to split audio on silence, ffmpeg - for audio files conversion.
 
+For Linux:
+```sh
+sudo apt-get install -y sox ffmpeg
+```
+
+For OS X:
+```sh
+brew install sox ffmpeg
+```
+
+Create virtual env and install dependencies
+```sh
 python3 -m venv env
-
 ./env/bin/activate
-
 pip install -r requirements.txt
-
-ENV VARS!
-
+```
+Setup required env vars as it was mentioned erlier
+ 
+Run it
+```sh
 python bot.py
-
-
- pip install -r
+```
 
 ## Usage example
 
