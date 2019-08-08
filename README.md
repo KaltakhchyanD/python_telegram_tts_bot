@@ -4,6 +4,7 @@
 [![Build Status](https://travis-ci.org/KaltakhchyanD/python_telegram_tts_bot.svg?branch=master)](https://travis-ci.org/KaltakhchyanD/python_telegram_tts_bot)
 [![Maintainability](https://api.codeclimate.com/v1/badges/6f19a9b8c1e0080f66b9/maintainability)](https://codeclimate.com/github/KaltakhchyanD/python_telegram_tts_bot/maintainability)
 [![Test Coverage](https://api.codeclimate.com/v1/badges/6f19a9b8c1e0080f66b9/test_coverage)](https://codeclimate.com/github/KaltakhchyanD/python_telegram_tts_bot/test_coverage)
+[![Documentation Status](https://readthedocs.org/projects/python-telegram-tts-bot/badge/?version=latest)](https://python-telegram-tts-bot.readthedocs.io/en/latest/?badge=latest)
 
 With this bot written on python3 with python-telegram-bot (<https://github.com/python-telegram-bot/python-telegram-bot>), you can create a bot that converts text message from a user into an audio file and voice message into text.
 
