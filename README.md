@@ -65,7 +65,15 @@ python bot.py
 
 ## Usage example
 
-A few motivating and useful examples of how your product can be used. Spice this up with code blocks and potentially more screenshots.
+There are 4 modules:
+ - bot.py - this is top module 
+ - handlers.py - contains handlers and conversation for python-telegram-bot dispatcher 
+ - yandex_tts(need to rename) - helds funcs to work with Yandex API
+ - check_wav_length(definitely need to rename) - contains functions to work with audio files
+ 
+So if you want to change and customize something - go there and change stuff.
+
+P.S. Also I've made readthedocs documentation(<https://python-telegram-tts-bot.readthedocs.io/en/latest/index.html>) but probably I won't support it(I've made it just to test Sphinx and RST)
 
 ## Contributing
 
